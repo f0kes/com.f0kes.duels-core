@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Core.Interfaces;
 
 namespace Core.Stats
 {

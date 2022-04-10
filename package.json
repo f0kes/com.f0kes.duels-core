@@ -1,0 +1,16 @@
+{
+  "name": "com.f0kes.duels_core",
+  "version": "0.0.1",
+  "displayName": "Duels Core",
+  "description": "Duels Core Scripts",
+  "unity": "2020.1",
+  "unityRelease": "0b5",
+  "dependencies": {
+    "net.tomweiland.riptidenetworking": "1.0.0"
+  },
+  "author": {
+    "name": "f0kes",
+    "email": "f0kesppokes@gmail.com",
+    "url": "https://www.unity3d.com"
+  }
+}

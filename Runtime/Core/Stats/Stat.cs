@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Core.Interfaces;
 using Core.Stats;
+using Core.Types;
 using UnityEngine;
 
 namespace Core.Stats
