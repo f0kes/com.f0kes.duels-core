@@ -94,15 +94,21 @@ namespace Core.Combat
 			OnAttackStarted?.Invoke(newDamage);
 		}
 
-		private Attack GetNextAttack()
+		private Attack GetNextAttack(bool setCurrentCount = true)
 		{
-			_currentAttackCount = _currentAttackCount++ % Attacks.Count;
-			return Attacks[_currentAttackCount];
+			int nextAttackCount = (_currentAttackCount + 1) % Attacks.Count;
+			Attack result = Attacks[nextAttackCount];
+			if (setCurrentCount)
+			{
+				_currentAttackCount = nextAttackCount;
+			}
+			
+			return result;
 		}
 
 		private bool CanAttack()
 		{
-			float staminaCost = Attacks[_currentAttackCount + 1].StaminaCost;
+			float staminaCost = GetNextAttack(false).StaminaCost;
 			if (_currentStamina < staminaCost)
 			{
 				return false;
