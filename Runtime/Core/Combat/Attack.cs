@@ -1,4 +1,5 @@
-﻿using Core.Enums;
+﻿using Core.CoreEnums;
+using Core.Enums;
 
 namespace Core.Combat
 {
@@ -6,7 +7,7 @@ namespace Core.Combat
 	public class Attack
 	{
 		public DamageType DamageType;
-		public string AttackName;
+		public AttackType AttackName;
 		public int DamageModifier;
 		public float AttackTime;
 		public float AttackRange;
