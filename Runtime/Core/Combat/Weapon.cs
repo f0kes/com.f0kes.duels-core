@@ -29,6 +29,7 @@ namespace Core.Combat
 				}
 			}
 		}
+		public WeaponType WeaponType { get; private set; }
 
 		private List<Attack> Attacks;
 		private AttributeStat _baseAttribute;
@@ -43,24 +44,27 @@ namespace Core.Combat
 
 		private float _currentStamina = 0;
 
-		public Weapon (AttributeStat baseAttribute, List<Attack> attacks, StatDict<AttributeStat> playerAttributes, StatDict<BasedStat> playerStats)
+		public Weapon (WeaponType weaponType, AttributeStat baseAttribute, List<Attack> attacks, StatDict<AttributeStat> playerAttributes, StatDict<BasedStat> playerStats)
 		{
 			_baseAttribute = baseAttribute;
 			Attacks = attacks;
 			_playerAttributes = playerAttributes;
 			_playerStats = playerStats;
+			WeaponType = weaponType;
 		}
 
 		public Weapon(WeaponObject weaponObject, StatDict<AttributeStat> playerAttributes, StatDict<BasedStat> playerStats)
 		{
+			_playerAttributes = playerAttributes;
+			_playerStats = playerStats;
+			WeaponType = weaponObject.Type;
 			_baseAttribute = weaponObject.BaseAttribute;
 			Attacks = new List<Attack>();
 			foreach (var attack in weaponObject.Attacks)
 			{
 				Attacks.Add(new Attack(attack));
 			}
-			_playerAttributes = playerAttributes;
-			_playerStats = playerStats;
+			
 		}
 		
 

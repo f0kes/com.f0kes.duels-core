@@ -11,7 +11,8 @@ namespace Core.Character
 	public class CharacterCombat : MonoBehaviour
 	{
 		public Action<Damage> OnAttack;
-		
+		public Action<Weapon> OnWeaponChange;
+
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
 		private Weapon[] _weapons = new Weapon[6];
 		private Weapon _currentWeapon;
@@ -60,6 +61,7 @@ namespace Core.Character
 			_currentWeaponIndex = index;
 			_currentWeapon = _weapons[index];
 			_currentWeapon.OnAttackStarted += OnAttackStarted;
+			OnWeaponChange?.Invoke(_currentWeapon);
 		}
 
 		public void TryAttack()
