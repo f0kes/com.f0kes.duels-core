@@ -79,12 +79,15 @@ namespace Core.Combat
 			if (!CanAttack())
 			{
 				_currentAttackTime += Time.deltaTime;
+				Debug.Log("Can't attack");
 				return;
 			}
 
 			_currentAttack = GetNextAttack();
 			_currentStamina -= _currentAttack.StaminaCost;
 			_currentAttackTime = 0;
+			
+			Debug.Log("Damage Initialized");
 			
 			Damage newDamage = GetDamage(_currentAttack);
 			newDamage.OnDamageDeflected += OnDamageDeflected;

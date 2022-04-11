@@ -116,6 +116,7 @@ public class PlayerMovement : MonoBehaviour
 		_moveDir = new Vector3(dir.x, 0, dir.z);
 		if (attack)
 		{
+			Debug.Log("attack");
 			_characterCombat.TryAttack();
 		}
 

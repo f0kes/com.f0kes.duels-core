@@ -46,7 +46,8 @@ namespace Core.Character
 
 		public void ChangeWeapon(int index)
 		{
-			if (_currentWeaponIndex == index || _weapons[index] == null)
+			Debug.Log("ChangeWeapon: " + index);
+			if (_weapons[index] == null || _currentWeapon == _weapons[index])
 				return;
 			if (_currentWeapon != null)
 			{
@@ -62,6 +63,7 @@ namespace Core.Character
 		{
 			if (_currentWeapon == null)
 				return;
+			Debug.Log("TryAttack");
 			_currentWeapon.TryAttack();
 		}
 

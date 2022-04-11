@@ -63,6 +63,7 @@ namespace Core.Character
 		{
 			float newHealth = CurrentHealth - damage.Amount;
 			_currentHealthPercent = newHealth / Stats[BasedStat.Health];
+			Debug.Log(damage.Amount);
 			if(_currentHealthPercent <= 0)
 			{
 				_currentHealthPercent = 0;
