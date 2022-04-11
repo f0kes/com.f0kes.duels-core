@@ -12,6 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9c007d8f5161c48bcbba8ec1f9075c, type: 3}
   m_Name: DefaultWeapon
   m_EditorClassIdentifier: 
-  Attacks: []
+  Attacks:
+  - DamageType: 0
+    AttackName: 1
+    DamageModifier: 1
+    AttackTime: 1
+    AttackRange: 10
+    StaminaCost: 10
+  - DamageType: 1
+    AttackName: 2
+    DamageModifier: 1
+    AttackTime: 1
+    AttackRange: 10
+    StaminaCost: 10
   Type: 0
   BaseAttribute: 0
