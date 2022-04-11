@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Core.Combat;
 using Core.Enums;
 using Core.Stats;
@@ -23,6 +24,11 @@ namespace Core.Character
 			int i = 0;
 			foreach (var weaponObject in _weaponObjects)
 			{
+				if (weaponObject == null)
+				{
+					continue;
+				}
+
 				Weapon weapon = new Weapon(weaponObject, characterAttributes, characterStats);
 				AddWeapon(weapon, i);
 				i++;
