@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Core.Combat;
 using Core.Enums;
@@ -9,6 +10,8 @@ namespace Core.Character
 {
 	public class CharacterCombat : MonoBehaviour
 	{
+		public Action<Damage> OnAttack;
+		
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
 		private Weapon[] _weapons = new Weapon[6];
 		private Weapon _currentWeapon;
@@ -69,6 +72,7 @@ namespace Core.Character
 
 		private void OnAttackStarted(Damage damage)
 		{
+			OnAttack?.Invoke(damage);
 			Collider[] colliders = Physics.OverlapSphere(transform.position, damage.Attack.AttackRange);
 			foreach (Collider col in colliders)
 			{
