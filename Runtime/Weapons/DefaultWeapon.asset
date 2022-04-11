@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Attacks:
   - DamageType: 0
-    AttackName: 1
+    AttackName: 0
     DamageModifier: 1
     AttackTime: 1
     AttackRange: 10
     StaminaCost: 10
   - DamageType: 1
-    AttackName: 2
+    AttackName: 1
     DamageModifier: 1
     AttackTime: 1
     AttackRange: 10
