@@ -18,17 +18,18 @@ namespace Core.Character
 
 		public void Init(StatDict<AttributeStat> characterAttributes, StatDict<BasedStat> characterStats)
 		{
+			_attributes = characterAttributes;
+			_stats = characterStats;
 			int i = 0;
 			foreach (var weaponObject in _weaponObjects)
 			{
 				Weapon weapon = new Weapon(weaponObject, characterAttributes, characterStats);
-				AddWeapon(weapon,i);
+				AddWeapon(weapon, i);
 				i++;
 			}
-			if(i > 0)
+
+			if (i > 0)
 				ChangeWeapon(0);
-			_attributes = characterAttributes;
-			_stats = characterStats;
 		}
 
 		public void AddWeapon(Weapon weapon, int index)
@@ -64,7 +65,7 @@ namespace Core.Character
 			foreach (Collider col in colliders)
 			{
 				CharacterEntity characterEntity = col.GetComponent<CharacterEntity>();
-				if (characterEntity!=null && IsCharacterAttackable(characterEntity))
+				if (characterEntity != null && IsCharacterAttackable(characterEntity))
 				{
 					characterEntity.TakeDamage(damage);
 				}
