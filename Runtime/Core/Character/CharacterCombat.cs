@@ -42,6 +42,11 @@ namespace Core.Character
 				ChangeWeapon(0);
 		}
 
+		public Weapon GetWeapon()
+		{
+			return _currentWeapon;
+		}
+
 		public void AddWeapon(Weapon weapon, int index)
 		{
 			_weapons[index] = weapon;

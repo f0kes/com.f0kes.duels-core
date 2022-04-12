@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core.CoreEnums;
 using Core.Enums;
 using Core.Stats;
 using UnityEngine;
 
 namespace Core.Combat
 {
-	public class Weapon 
+	public class Weapon
 	{
 		public Action<Damage> OnAttackStarted;
-		
+
 		public ElementType ElementType
 		{
 			get
@@ -21,15 +22,17 @@ namespace Core.Combat
 						return ElementType.Red;
 					case AttributeStat.Intellect:
 					case AttributeStat.Light:
-						return  ElementType.Blue;
+						return ElementType.Blue;
 					case AttributeStat.Agility:
 					case AttributeStat.Nature:
 					default:
-						return  ElementType.Green;
+						return ElementType.Green;
 				}
 			}
 		}
+
 		public WeaponType WeaponType { get; private set; }
+		public WeaponName WeaponName { get; private set; }
 
 		private List<Attack> Attacks;
 		private AttributeStat _baseAttribute;
@@ -44,32 +47,34 @@ namespace Core.Combat
 
 		private float _currentStamina = 0;
 
-		public Weapon (WeaponType weaponType, AttributeStat baseAttribute, List<Attack> attacks, StatDict<AttributeStat> playerAttributes, StatDict<BasedStat> playerStats)
+		public Weapon(WeaponType weaponType, WeaponName weaponName, AttributeStat baseAttribute, List<Attack> attacks,
+			StatDict<AttributeStat> playerAttributes, StatDict<BasedStat> playerStats)
 		{
 			_baseAttribute = baseAttribute;
 			Attacks = attacks;
 			_playerAttributes = playerAttributes;
 			_playerStats = playerStats;
 			WeaponType = weaponType;
+			WeaponName = weaponName;
 		}
 
-		public Weapon(WeaponObject weaponObject, StatDict<AttributeStat> playerAttributes, StatDict<BasedStat> playerStats)
+		public Weapon(WeaponObject weaponObject, StatDict<AttributeStat> playerAttributes,
+			StatDict<BasedStat> playerStats)
 		{
 			_playerAttributes = playerAttributes;
 			_playerStats = playerStats;
 			WeaponType = weaponObject.Type;
 			_baseAttribute = weaponObject.BaseAttribute;
 			Attacks = new List<Attack>();
+			WeaponName = weaponObject.WeaponName;
 			foreach (var attack in weaponObject.Attacks)
 			{
 				Attacks.Add(new Attack(attack));
 			}
-			
 		}
-		
 
 
-		public void Equip( StatDict<AttributeStat> playerAttributes,
+		public void Equip(StatDict<AttributeStat> playerAttributes,
 			StatDict<BasedStat> playerStats)
 		{
 			_playerAttributes = playerAttributes;
@@ -90,9 +95,9 @@ namespace Core.Combat
 			_currentAttack = GetNextAttack();
 			_currentStamina -= _currentAttack.StaminaCost;
 			_currentAttackTime = 0;
-			
+
 			Debug.Log("Damage Initialized");
-			
+
 			Damage newDamage = GetDamage(_currentAttack);
 			newDamage.OnDamageDeflected += OnDamageDeflected;
 			OnAttackStarted?.Invoke(newDamage);
@@ -106,7 +111,7 @@ namespace Core.Combat
 			{
 				_currentAttackCount = nextAttackCount;
 			}
-			
+
 			return result;
 		}
 
@@ -124,7 +129,7 @@ namespace Core.Combat
 		private void OnDamageDeflected(Weapon other)
 		{
 			float damageToOtherWeaponStamina = PlayerDamage * _currentAttack.DamageModifier;
-			float damageMultiplier =1;
+			float damageMultiplier = 1;
 			//blue stronger than red, red stronger than green, green stronger than blue
 			if (ElementType == ElementType.Red && other.ElementType == ElementType.Green)
 			{
@@ -138,9 +143,9 @@ namespace Core.Combat
 			{
 				damageMultiplier = 2;
 			}
-			damageToOtherWeaponStamina *= damageMultiplier;
-			other._currentStamina-= damageToOtherWeaponStamina;
 
+			damageToOtherWeaponStamina *= damageMultiplier;
+			other._currentStamina -= damageToOtherWeaponStamina;
 		}
 
 		private Damage GetDamage(Attack withAttack)
