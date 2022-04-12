@@ -25,5 +25,6 @@ MonoBehaviour:
     AttackTime: 1
     AttackRange: 10
     StaminaCost: 10
-  Type: 0
+  WeaponName: 0
+  Type: 5
   BaseAttribute: 0
