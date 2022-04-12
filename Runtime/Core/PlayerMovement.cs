@@ -16,9 +16,11 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField, SerializeReference] private Player _player;
 	[SerializeField] private Transform _cameraProxy;
 	[SerializeField] private Rigidbody _rb;
-	
+
 	[SerializeField] private float _lerpValue = 0.01f;
 	[SerializeField] private float _snapTolerance = 5f;
+
+	[SerializeField] private bool _toReadInput = true;
 
 	public Action<Message> OnMovementDataChange;
 	private Message _movementData;
@@ -30,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
 
 	private Vector3 _moveDir;
 	public Vector3 MoveDir => _moveDir;
+
 	private void Start()
 	{
 		_inputs = new bool[7];
@@ -55,7 +58,10 @@ public class PlayerMovement : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		ReadInput();
+		if (_toReadInput)
+		{
+			ReadInput();
+		}
 	}
 
 	public void SetInput(bool[] inputs, Vector3 forward)
@@ -81,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
 
 		HandleInput(inpDir, _inputs[4], _inputs[5], _inputs[6]);
 	}
+
 	public void SetPos(Vector3 newPosition, Vector3 moveDir, bool isLocal)
 	{
 		Transform playerTransform = transform;
@@ -103,13 +110,13 @@ public class PlayerMovement : MonoBehaviour
 	private void HandleInput(Vector2 inpDir, bool jump, bool sprint, bool attack)
 	{
 		Vector3 dir = Vector3.Normalize(_cameraProxy.right * inpDir.x + _cameraProxy.forward * inpDir.y);
-		float realMS = sprint ? _characterEntity.Stats[BasedStat.Speed]*2 : _characterEntity.Stats[BasedStat.Speed];
+		float realMS = sprint ? _characterEntity.Stats[BasedStat.Speed] * 2 : _characterEntity.Stats[BasedStat.Speed];
 		dir *= realMS;
 
 		dir.y = _rb.velocity.y;
 		if (jump && Grounded())
 		{
-			dir.y += Mathf.Sqrt(_characterEntity.Stats[BasedStat.Speed]/2 * -2f * Physics.gravity.y);
+			dir.y += Mathf.Sqrt(_characterEntity.Stats[BasedStat.Speed] / 2 * -2f * Physics.gravity.y);
 		}
 
 		_rb.velocity = dir;

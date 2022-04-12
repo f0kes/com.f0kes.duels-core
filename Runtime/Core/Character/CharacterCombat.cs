@@ -73,7 +73,6 @@ namespace Core.Character
 		{
 			if (_currentWeapon == null)
 				return;
-			Debug.Log("TryAttack");
 			_currentWeapon.TryAttack();
 		}
 
