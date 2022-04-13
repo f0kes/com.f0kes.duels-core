@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.Combat;
+using Core.CoreEnums;
 using Core.Stats;
 using Core.Enums;
+using Core.Events;
 using UnityEngine;
 
 namespace Core.Character
@@ -17,19 +19,21 @@ namespace Core.Character
 		}
 
 		[SerializeField] private List<AttributeKeyValue> _inspectorAttributes;
-		
-		[SerializeField]private CharacterCombat _combat;
-		
+
+		[SerializeField] private CharacterCombat _combat;
+
 		public StatDict<AttributeStat> Attributes = new StatDict<AttributeStat>();
 		public StatDict<BasedStat> Stats = new StatDict<BasedStat>();
-		
+
 		public float CurrentHealth => _currentHealthPercent * Stats[BasedStat.Health];
-		
+
 		private float _currentHealthPercent = 1;
 
 		private void Awake()
 		{
 			Init();
+			EventTrigger<DamageEventArgs>.Instance[new TriggerKey(this, ActionType.DamageTaken)] +=
+				(args) => TakeDamage(args.Damage);
 		}
 
 		public void SetAttributes(float[] values)
@@ -41,12 +45,12 @@ namespace Core.Character
 					{AttributeStat = (AttributeStat) i, Value = values[i]};
 				_inspectorAttributes.Add(attributeKeyValue);
 			}
+
 			Init();
 		}
 
 		private void Init()
 		{
-			
 			foreach (AttributeKeyValue kv in _inspectorAttributes)
 			{
 				Attributes.SetStat(kv.AttributeStat, new Stat(kv.Value));
@@ -56,20 +60,22 @@ namespace Core.Character
 			{
 				Stats.SetStat(stat, BasedStatBook.GetBasedStat(stat, Attributes));
 			}
-			_combat.Init(Attributes,Stats);
+
+			_combat.Init(Attributes, Stats);
 		}
-		
+
 		public void TakeDamage(Damage damage)
 		{
 			float newHealth = CurrentHealth - damage.Amount;
 			_currentHealthPercent = newHealth / Stats[BasedStat.Health];
 			Debug.Log(damage.Amount);
-			if(_currentHealthPercent <= 0)
+			if (_currentHealthPercent <= 0)
 			{
 				_currentHealthPercent = 0;
 				Die();
 			}
 		}
+
 		private void Die()
 		{
 			Destroy(gameObject);

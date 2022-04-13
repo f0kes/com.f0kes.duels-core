@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Combat;
+using Core.CoreEnums;
 using Core.Enums;
+using Core.Events;
 using Core.Stats;
 using UnityEngine;
 
@@ -85,7 +87,9 @@ namespace Core.Character
 				CharacterEntity characterEntity = col.GetComponent<CharacterEntity>();
 				if (characterEntity != null && IsCharacterAttackable(characterEntity))
 				{
-					characterEntity.TakeDamage(damage);
+					EventTrigger<DamageEventArgs>.Instance[new TriggerKey(characterEntity, ActionType.HitLanded)]
+						.Invoke(new DamageEventArgs(damage));
+					//characterEntity.TakeDamage(damage);
 				}
 			}
 		}
