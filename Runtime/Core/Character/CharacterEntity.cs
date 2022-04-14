@@ -32,8 +32,8 @@ namespace Core.Character
 		private void Awake()
 		{
 			Init();
-			EventTrigger<DamageEventArgs>.Instance[new TriggerKey(this, ActionType.DamageTaken)] +=
-				(args) => TakeDamage(args.Damage);
+			EventTrigger<DamageEventArgs>.I[this, ActionType.HitTaken]
+				.Subscribe((args) => TakeDamage(args.Damage), true);
 		}
 
 		public void SetAttributes(float[] values)
