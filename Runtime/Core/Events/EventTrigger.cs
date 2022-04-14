@@ -32,7 +32,6 @@ namespace Core.Events
 			{
 				if (needsToBeAuthorised)
 				{
-					UnauthorizedAction += action;
 					AuthorizedAction += action;
 				}
 				else
@@ -45,13 +44,10 @@ namespace Core.Events
 			{
 				if (Authorized || forceAuthorization)
 				{
-					UnauthorizedAction?.Invoke(action);
 					AuthorizedAction?.Invoke(action);
 				}
-				else
-				{
-					UnauthorizedAction?.Invoke(action);
-				}
+
+				UnauthorizedAction?.Invoke(action);
 			}
 		}
 
@@ -59,7 +55,7 @@ namespace Core.Events
 		public static EventTrigger<T> I => _instance ??= new EventTrigger<T>();
 
 
-		private Dictionary<TriggerKey, TriggerAction<T>> _dictionary =
+		private Dictionary<TriggerKey, TriggerAction<T>> _triggers =
 			new Dictionary<TriggerKey, TriggerAction<T>>();
 
 		private List<TriggerKey> _workingEvents = new List<TriggerKey>();
@@ -74,12 +70,12 @@ namespace Core.Events
 			get
 			{
 				TriggerKey triggerKey = new TriggerKey(entity, type);
-				if (!_dictionary.ContainsKey(triggerKey))
+				if (!_triggers.ContainsKey(triggerKey))
 				{
-					_dictionary[triggerKey] = new TriggerAction<T>();
+					_triggers[triggerKey] = new TriggerAction<T>();
 				}
 
-				return _dictionary[triggerKey];
+				return _triggers[triggerKey];
 			}
 			set
 			{
@@ -93,7 +89,7 @@ namespace Core.Events
 					_workingEvents.Remove(triggerKey);
 				}
 
-				_dictionary[triggerKey] = value;
+				_triggers[triggerKey] = value;
 			}
 		}
 	}
