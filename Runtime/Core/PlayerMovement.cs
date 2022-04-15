@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
 	public Action<Message> OnMovementDataChange;
 	private Message _movementData;
 	private bool[] _inputs;
+	private bool _attackReleased = true;
 
 	//private float MoveSpeed => _characterEntity.Stats[BasedStat.Speed];
 	//private float SprintSpeed => MoveSpeed*2;
@@ -105,8 +106,13 @@ public class PlayerMovement : MonoBehaviour
 
 		_rb.velocity = dir;
 		_moveDir = new Vector3(dir.x, 0, dir.z);
-		if (attack)
+		if (!attack)
 		{
+			_attackReleased = true;
+		}
+		else if (_attackReleased)
+		{
+			_attackReleased = false;
 			Debug.Log("attack");
 			_characterCombat.TryAttack();
 		}
