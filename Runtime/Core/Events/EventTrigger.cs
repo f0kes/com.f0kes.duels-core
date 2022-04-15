@@ -5,6 +5,7 @@ using Core.Combat;
 using Core.CoreEnums;
 using JetBrains.Annotations;
 using PlasticGui.WebApi.Responses;
+using RiptideNetworking;
 
 namespace Core.Events
 {
@@ -92,10 +93,26 @@ namespace Core.Events
 				_triggers[triggerKey] = value;
 			}
 		}
+
+		public TriggerAction<T> this[ushort entityId, ActionType type]
+		{
+			get
+			{
+				CharacterEntity entity = CharacterEntity.EntityDict[entityId];
+				return this[entity, type];
+			}
+			set
+			{
+				CharacterEntity entity = CharacterEntity.EntityDict[entityId];
+				this[entity, type] = value;
+			}
+		}
 	}
 
 	public abstract class TriggerEventArgs : EventArgs
 	{
+		public abstract Message Serialize(Message initial);
+		public abstract void Deserialize(Message message);
 	}
 
 	public class DamageEventArgs : TriggerEventArgs
@@ -105,6 +122,35 @@ namespace Core.Events
 		public DamageEventArgs(Damage damage)
 		{
 			Damage = damage;
+		}
+
+		public override Message Serialize(Message initial)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Deserialize(Message message)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	public class AttackEventArgs : TriggerEventArgs
+	{
+		public Weapon Weapon { get; set; }
+		public AttackEventArgs(Weapon weapon)
+		{
+			Weapon = weapon;
+		}
+
+		public override Message Serialize(Message initial)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Deserialize(Message message)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

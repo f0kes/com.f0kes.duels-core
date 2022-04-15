@@ -23,8 +23,12 @@ namespace Core.Character
 		private StatDict<AttributeStat> _attributes = new StatDict<AttributeStat>();
 		private StatDict<BasedStat> _stats = new StatDict<BasedStat>();
 
-		public void Init(StatDict<AttributeStat> characterAttributes, StatDict<BasedStat> characterStats)
+		private ushort _entityId;
+
+		public void Init(ushort entityId, StatDict<AttributeStat> characterAttributes,
+			StatDict<BasedStat> characterStats)
 		{
+			_entityId = entityId;
 			_attributes = characterAttributes;
 			_stats = characterStats;
 			int i = 0;
@@ -84,10 +88,10 @@ namespace Core.Character
 			Collider[] colliders = Physics.OverlapSphere(transform.position, damage.Attack.AttackRange);
 			foreach (Collider col in colliders)
 			{
-				CharacterEntity characterEntity = col.GetComponent<CharacterEntity>();
-				if (characterEntity != null && IsCharacterAttackable(characterEntity))
+				CharacterEntity target = col.GetComponent<CharacterEntity>();
+				if (target != null && IsCharacterAttackable(target))
 				{
-					EventTrigger<DamageEventArgs>.I[characterEntity, ActionType.HitTaken]
+					EventTrigger<DamageEventArgs>.I[target, ActionType.HitTaken]
 						.Invoke(new DamageEventArgs(damage));
 				}
 			}

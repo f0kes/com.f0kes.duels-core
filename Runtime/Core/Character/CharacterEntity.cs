@@ -11,6 +11,11 @@ namespace Core.Character
 {
 	public class CharacterEntity : MonoBehaviour
 	{
+		public static Dictionary<ushort, CharacterEntity> EntityDict = new Dictionary<ushort, CharacterEntity>();
+
+		public ushort Id { get; protected set; }
+		
+		
 		[Serializable]
 		public struct AttributeKeyValue
 		{
@@ -31,7 +36,6 @@ namespace Core.Character
 
 		private void Awake()
 		{
-			Init();
 			EventTrigger<DamageEventArgs>.I[this, ActionType.HitTaken]
 				.Subscribe((args) => TakeDamage(args.Damage), true);
 		}
@@ -46,11 +50,13 @@ namespace Core.Character
 				_inspectorAttributes.Add(attributeKeyValue);
 			}
 
-			Init();
+			Init(Id);
 		}
 
-		private void Init()
+		public void Init(ushort id)
 		{
+			EntityDict[id] = this;
+			Id = id;
 			foreach (AttributeKeyValue kv in _inspectorAttributes)
 			{
 				Attributes.SetStat(kv.AttributeStat, new Stat(kv.Value));
@@ -61,7 +67,7 @@ namespace Core.Character
 				Stats.SetStat(stat, BasedStatBook.GetBasedStat(stat, Attributes));
 			}
 
-			_combat.Init(Attributes, Stats);
+			_combat.Init(id, Attributes, Stats);
 		}
 
 		public void TakeDamage(Damage damage)

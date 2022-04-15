@@ -9,6 +9,7 @@
 		
 		DamageTaken,
 		DamageDealt,
-		
+
+		OnAttackStarted
 	}
 }
