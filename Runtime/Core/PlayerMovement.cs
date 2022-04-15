@@ -32,7 +32,8 @@ public class PlayerMovement : MonoBehaviour
 	//private float JumpSpeed => Mathf.Sqrt(MoveSpeed/2 * -2f * Physics.gravity.magnitude);
 
 	private Vector3 _moveDir;
-	public Vector3 MoveDir => _moveDir;
+	public Vector3 MoveDir { get => _moveDir; set => _moveDir = value; }
+
 
 	private void Start()
 	{
