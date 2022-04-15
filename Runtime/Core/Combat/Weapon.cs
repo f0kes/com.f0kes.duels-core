@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Core.Character;
 using Core.CoreEnums;
 using Core.Enums;
+using Core.Events;
 using Core.Interfaces;
 using Core.Stats;
 using RiptideNetworking;
@@ -10,7 +11,7 @@ using UnityEngine;
 
 namespace Core.Combat
 {
-	public class Weapon 
+	public class Weapon
 	{
 		public Action<Damage> OnAttackStarted;
 
@@ -59,6 +60,7 @@ namespace Core.Combat
 			_playerStats = playerStats;
 			WeaponType = weaponType;
 			WeaponName = weaponName;
+			Init();
 		}
 
 		public Weapon(WeaponObject weaponObject, StatDict<AttributeStat> playerAttributes,
@@ -74,6 +76,8 @@ namespace Core.Combat
 			{
 				Attacks.Add(new Attack(attack));
 			}
+
+			Init();
 		}
 
 		public static Weapon GetWeapon(WeaponName weaponName, ushort entityID)
@@ -81,9 +85,19 @@ namespace Core.Combat
 			WeaponObject weaponObject = CoreGameAssets.Singleton.WeaponObjects[weaponName];
 			CharacterEntity entity = CharacterEntity.EntityDict[entityID];
 			Weapon newWeapon = new Weapon(weaponObject, entity.Attributes, entity.Stats);
+			newWeapon.Init();
 			return newWeapon;
 		}
 
+		public void Init()
+		{
+			Ticker.OnTick += OnTick;
+		}
+
+		private void OnTick(ushort obj)
+		{
+			_currentAttackTime += Time.fixedDeltaTime;
+		}
 
 		public void Equip(StatDict<AttributeStat> playerAttributes,
 			StatDict<BasedStat> playerStats)
@@ -98,8 +112,6 @@ namespace Core.Combat
 		{
 			if (!CanAttack())
 			{
-				_currentAttackTime += Time.deltaTime;
-				Debug.Log("Can't attack");
 				return;
 			}
 

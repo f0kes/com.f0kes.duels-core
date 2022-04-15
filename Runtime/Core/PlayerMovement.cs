@@ -113,7 +113,6 @@ public class PlayerMovement : MonoBehaviour
 		else if (_attackReleased)
 		{
 			_attackReleased = false;
-			Debug.Log("attack");
 			_characterCombat.TryAttack();
 		}
 
