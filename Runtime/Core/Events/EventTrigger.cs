@@ -30,11 +30,12 @@ namespace Core.Events
 			message.AddUShort((ushort) ActionType);
 			return message;
 		}
-		
 	}
 
 	public class EventTrigger
 	{
+		public Action<TriggerKey, TriggerEventArgs> AnyActionTriggered;
+
 		public class TriggerAction<TArgs>
 		{
 			public bool Authorized { get; set; }
@@ -71,36 +72,18 @@ namespace Core.Events
 		private Dictionary<TriggerKey, TriggerAction<TriggerEventArgs>> _triggers =
 			new Dictionary<TriggerKey, TriggerAction<TriggerEventArgs>>();
 
-		private List<TriggerKey> _workingEvents = new List<TriggerKey>();
 
-		public List<TriggerKey> GetWorkingEvents()
-		{
-			return _workingEvents;
-		}
-
-		public TriggerAction<TriggerEventArgs> this[TriggerKey triggerKey]
+		private TriggerAction<TriggerEventArgs> this[TriggerKey triggerKey]
 		{
 			get
 			{
 				if (!_triggers.ContainsKey(triggerKey))
 				{
 					_triggers[triggerKey] = new TriggerAction<TriggerEventArgs>();
+					_triggers[triggerKey].Subscribe((args) => { AnyActionTriggered?.Invoke(triggerKey, args); }, false);
 				}
 
 				return _triggers[triggerKey];
-			}
-			set
-			{
-				if (value != null)
-				{
-					_workingEvents.Add(triggerKey);
-				}
-				else if (_workingEvents.Contains(triggerKey))
-				{
-					_workingEvents.Remove(triggerKey);
-				}
-
-				_triggers[triggerKey] = value;
 			}
 		}
 
@@ -111,11 +94,6 @@ namespace Core.Events
 				var triggerKey = new TriggerKey(entity, type);
 				return this[triggerKey];
 			}
-			set
-			{
-				var triggerKey = new TriggerKey(entity, type);
-				this[triggerKey] = value;
-			}
 		}
 
 		public TriggerAction<TriggerEventArgs> this[ushort entityId, ActionType type]
@@ -124,11 +102,6 @@ namespace Core.Events
 			{
 				var entity = CharacterEntity.EntityDict[entityId];
 				return this[entity, type];
-			}
-			set
-			{
-				var entity = CharacterEntity.EntityDict[entityId];
-				this[entity, type] = value;
 			}
 		}
 	}

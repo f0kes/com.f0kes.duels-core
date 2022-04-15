@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Core.Combat
 {
-	public class Weapon : IIDContainer
+	public class Weapon 
 	{
 		public Action<Damage> OnAttackStarted;
 
@@ -174,7 +174,7 @@ namespace Core.Combat
 
 		public Message Serialize(Message message)
 		{
-			
+			message.AddUShort((ushort) WeaponType);
 			return message;
 		}
 	}
