@@ -89,25 +89,7 @@ public class PlayerMovement : MonoBehaviour
 		Move(inpDir, _inputs[4], _inputs[5], _inputs[6]);
 	}
 
-	public void SetPos(Vector3 newPosition, Vector3 moveDir, bool isLocal)
-	{
-		Transform playerTransform = transform;
-		float dist = Vector3.Distance(playerTransform.position, newPosition);
-		if (!isLocal || dist > _snapTolerance)
-		{
-			playerTransform.position = newPosition;
-		}
-		else
-		{
-			playerTransform.position = Vector3.Lerp(transform.position, newPosition, _lerpValue);
-		}
-
-		if (!isLocal)
-		{
-			_moveDir = moveDir;
-		}
-	}
-
+	
 	private void Move(Vector2 inpDir, bool jump, bool sprint, bool attack)
 	{
 		Vector3 dir = Vector3.Normalize(_cameraProxy.right * inpDir.x + _cameraProxy.forward * inpDir.y);
