@@ -73,7 +73,7 @@ namespace Core.Events
 			new Dictionary<TriggerKey, TriggerAction<TriggerEventArgs>>();
 
 
-		private TriggerAction<TriggerEventArgs> this[TriggerKey triggerKey]
+		public TriggerAction<TriggerEventArgs> this[TriggerKey triggerKey]
 		{
 			get
 			{
