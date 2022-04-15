@@ -46,6 +46,9 @@ namespace Core.Character
 
 			if (i > 0)
 				ChangeWeapon(0);
+
+			
+			EventTrigger.I[_entityId, ActionType.OnAttackStarted].Subscribe(Attack, true);
 		}
 
 		public Weapon GetWeapon()
@@ -64,26 +67,26 @@ namespace Core.Character
 			Debug.Log("ChangeWeapon: " + index);
 			if (_weapons[index] == null || _currentWeapon == _weapons[index])
 				return;
-			if (_currentWeapon != null)
-			{
-				_currentWeapon.OnAttackStarted -= OnAttackStarted;
-			}
 
 			_currentWeaponIndex = index;
 			_currentWeapon = _weapons[index];
-			_currentWeapon.OnAttackStarted += OnAttackStarted;
 			OnWeaponChange?.Invoke(_currentWeapon);
 		}
 
-		public void TryAttack()
+		
+
+		public void Attack(TriggerEventArgs args)
 		{
 			if (_currentWeapon == null)
 				return;
-			_currentWeapon.TryAttack();
+			Damage damage = _currentWeapon.GetAttackDamage();
+			OnAttackStarted(damage);
 		}
 
 		private void OnAttackStarted(Damage damage)
 		{
+			if(damage.Attack==null)
+				return;
 			OnAttack?.Invoke(damage);
 			Collider[] colliders = Physics.OverlapSphere(transform.position, damage.Attack.AttackRange);
 			foreach (Collider col in colliders)

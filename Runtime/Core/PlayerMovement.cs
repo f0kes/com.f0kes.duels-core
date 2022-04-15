@@ -113,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
 		else if (_attackReleased)
 		{
 			_attackReleased = false;
-			_characterCombat.TryAttack();
+			EventTrigger.I[_characterEntity, ActionType.OnAttackStarted].Invoke(new EmptyEventArgs());
 		}
 
 		RecordMovementData();

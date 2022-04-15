@@ -13,8 +13,6 @@ namespace Core.Combat
 {
 	public class Weapon
 	{
-		public Action<Damage> OnAttackStarted;
-
 		public ElementType ElementType
 		{
 			get
@@ -51,17 +49,6 @@ namespace Core.Combat
 
 		private float _currentStamina = 0;
 
-		public Weapon(WeaponType weaponType, WeaponName weaponName, AttributeStat baseAttribute, List<Attack> attacks,
-			StatDict<AttributeStat> playerAttributes, StatDict<BasedStat> playerStats)
-		{
-			_baseAttribute = baseAttribute;
-			Attacks = attacks;
-			_playerAttributes = playerAttributes;
-			_playerStats = playerStats;
-			WeaponType = weaponType;
-			WeaponName = weaponName;
-			Init();
-		}
 
 		public Weapon(WeaponObject weaponObject, StatDict<AttributeStat> playerAttributes,
 			StatDict<BasedStat> playerStats)
@@ -80,14 +67,6 @@ namespace Core.Combat
 			Init();
 		}
 
-		public static Weapon GetWeapon(WeaponName weaponName, ushort entityID)
-		{
-			WeaponObject weaponObject = CoreGameAssets.Singleton.WeaponObjects[weaponName];
-			CharacterEntity entity = CharacterEntity.EntityDict[entityID];
-			Weapon newWeapon = new Weapon(weaponObject, entity.Attributes, entity.Stats);
-			newWeapon.Init();
-			return newWeapon;
-		}
 
 		public void Init()
 		{
@@ -107,24 +86,27 @@ namespace Core.Combat
 			_currentStamina = playerStats.GetStat(BasedStat.Stamina).BaseValue;
 		}
 
+		
 
-		public void TryAttack()
+		public Damage GetAttackDamage()
 		{
+			Damage damage = new Damage();
 			if (!CanAttack())
 			{
-				return;
+				return damage;
 			}
 
 			_currentAttack = GetNextAttack();
 			_currentStamina -= _currentAttack.StaminaCost;
 			_currentAttackTime = 0;
 
-			Debug.Log("Damage Initialized");
 
-			Damage newDamage = GetDamage(_currentAttack);
-			newDamage.OnDamageDeflected += OnDamageDeflected;
-			OnAttackStarted?.Invoke(newDamage);
+			damage = GetDamage(_currentAttack);
+			damage.OnDamageDeflected += OnDamageDeflected;
+
+			return damage;
 		}
+
 
 		private Attack GetNextAttack(bool setCurrentCount = true)
 		{

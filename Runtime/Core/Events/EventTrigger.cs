@@ -111,6 +111,17 @@ namespace Core.Events
 		public abstract Message Serialize(Message message);
 		public abstract void Deserialize(Message message);
 	}
+	public class EmptyEventArgs : TriggerEventArgs
+	{
+		public override Message Serialize(Message message)
+		{
+			return message;
+		}
+
+		public override void Deserialize(Message message)
+		{
+		}
+	}
 
 	public class DamageEventArgs : TriggerEventArgs
 	{
