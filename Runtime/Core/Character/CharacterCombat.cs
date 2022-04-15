@@ -12,7 +12,7 @@ namespace Core.Character
 {
 	public class CharacterCombat : MonoBehaviour
 	{
-		public Action<Damage> OnAttack;
+	
 		public Action<Weapon> OnWeaponChange;
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
@@ -80,7 +80,6 @@ namespace Core.Character
 
 		private void OnAttackStarted(Damage damage)
 		{
-			OnAttack?.Invoke(damage);
 			Collider[] colliders = Physics.OverlapSphere(transform.position, damage.Attack.AttackRange);
 			foreach (Collider col in colliders)
 			{
