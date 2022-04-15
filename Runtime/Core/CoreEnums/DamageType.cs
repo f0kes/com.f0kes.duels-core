@@ -1,6 +1,6 @@
 ﻿namespace Core.Enums
 {
-	public enum DamageType
+	public enum DamageType : ushort
 	{
 		Physical,
 		Magical,

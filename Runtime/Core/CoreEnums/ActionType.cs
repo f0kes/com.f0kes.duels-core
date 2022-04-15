@@ -1,6 +1,6 @@
 ﻿namespace Core.CoreEnums
 {
-	public enum ActionType
+	public  enum ActionType : ushort
 	{
 		HitLanded,
 		HitTaken,

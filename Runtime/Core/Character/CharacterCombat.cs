@@ -91,7 +91,7 @@ namespace Core.Character
 				CharacterEntity target = col.GetComponent<CharacterEntity>();
 				if (target != null && IsCharacterAttackable(target))
 				{
-					EventTrigger<DamageEventArgs>.I[target, ActionType.HitTaken]
+					EventTrigger.I[target, ActionType.HitTaken]
 						.Invoke(new DamageEventArgs(damage));
 				}
 			}

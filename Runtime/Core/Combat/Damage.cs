@@ -1,6 +1,7 @@
 ﻿using System;
 using Core.Character;
 using Core.Enums;
+using RiptideNetworking;
 
 namespace Core.Combat
 {
@@ -18,6 +19,23 @@ namespace Core.Combat
 			this.Attack = attack;
 			OnDamageInflicted = null;
 			OnDamageDeflected = null;
+		}
+
+		public Damage(Message from)
+		{
+			Attack = new Attack(from);
+			Amount = from.GetFloat();
+			Type = (DamageType)from.GetUShort();
+			OnDamageInflicted = null;
+			OnDamageDeflected = null;
+		}
+
+		public Message Serialize(Message message)
+		{
+			message = Attack.Serialize(message);
+			message.AddFloat(Amount);
+			message.AddUShort((ushort)Type);
+			return message;
 		}
 	}
 }

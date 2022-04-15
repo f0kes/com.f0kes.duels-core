@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using Core.Character;
 using Core.Combat;
 using Core.CoreEnums;
-using JetBrains.Annotations;
-using PlasticGui.WebApi.Responses;
 using RiptideNetworking;
 
 namespace Core.Events
@@ -19,17 +17,31 @@ namespace Core.Events
 			Entity = entity;
 			ActionType = actionType;
 		}
+
+		public TriggerKey(Message message)
+		{
+			Entity = CharacterEntity.EntityDict[message.GetUShort()];
+			ActionType = (ActionType) message.GetUShort();
+		}
+
+		public Message Serialize(Message message)
+		{
+			message.AddUShort(Entity.Id);
+			message.AddUShort((ushort) ActionType);
+			return message;
+		}
+		
 	}
 
-	public class EventTrigger<T> where T : TriggerEventArgs
+	public class EventTrigger
 	{
-		public class TriggerAction<TAction>
+		public class TriggerAction<TArgs>
 		{
 			public bool Authorized { get; set; }
-			private Action<TAction> AuthorizedAction { get; set; }
-			private Action<TAction> UnauthorizedAction { get; set; }
+			private Action<TArgs> AuthorizedAction { get; set; }
+			private Action<TArgs> UnauthorizedAction { get; set; }
 
-			public void Subscribe(Action<TAction> action, bool needsToBeAuthorised)
+			public void Subscribe(Action<TArgs> action, bool needsToBeAuthorised)
 			{
 				if (needsToBeAuthorised)
 				{
@@ -41,7 +53,7 @@ namespace Core.Events
 				}
 			}
 
-			public void Invoke(TAction action, bool forceAuthorization = false)
+			public void Invoke(TArgs action, bool forceAuthorization = false)
 			{
 				if (Authorized || forceAuthorization)
 				{
@@ -52,12 +64,12 @@ namespace Core.Events
 			}
 		}
 
-		private static EventTrigger<T> _instance;
-		public static EventTrigger<T> I => _instance ??= new EventTrigger<T>();
+		private static EventTrigger _instance;
+		public static EventTrigger I => _instance ??= new EventTrigger();
 
 
-		private Dictionary<TriggerKey, TriggerAction<T>> _triggers =
-			new Dictionary<TriggerKey, TriggerAction<T>>();
+		private Dictionary<TriggerKey, TriggerAction<TriggerEventArgs>> _triggers =
+			new Dictionary<TriggerKey, TriggerAction<TriggerEventArgs>>();
 
 		private List<TriggerKey> _workingEvents = new List<TriggerKey>();
 
@@ -66,21 +78,19 @@ namespace Core.Events
 			return _workingEvents;
 		}
 
-		public TriggerAction<T> this[CharacterEntity entity, ActionType type]
+		public TriggerAction<TriggerEventArgs> this[TriggerKey triggerKey]
 		{
 			get
 			{
-				TriggerKey triggerKey = new TriggerKey(entity, type);
 				if (!_triggers.ContainsKey(triggerKey))
 				{
-					_triggers[triggerKey] = new TriggerAction<T>();
+					_triggers[triggerKey] = new TriggerAction<TriggerEventArgs>();
 				}
 
 				return _triggers[triggerKey];
 			}
 			set
 			{
-				TriggerKey triggerKey = new TriggerKey(entity, type);
 				if (value != null)
 				{
 					_workingEvents.Add(triggerKey);
@@ -94,16 +104,30 @@ namespace Core.Events
 			}
 		}
 
-		public TriggerAction<T> this[ushort entityId, ActionType type]
+		public TriggerAction<TriggerEventArgs> this[CharacterEntity entity, ActionType type]
 		{
 			get
 			{
-				CharacterEntity entity = CharacterEntity.EntityDict[entityId];
+				var triggerKey = new TriggerKey(entity, type);
+				return this[triggerKey];
+			}
+			set
+			{
+				var triggerKey = new TriggerKey(entity, type);
+				this[triggerKey] = value;
+			}
+		}
+
+		public TriggerAction<TriggerEventArgs> this[ushort entityId, ActionType type]
+		{
+			get
+			{
+				var entity = CharacterEntity.EntityDict[entityId];
 				return this[entity, type];
 			}
 			set
 			{
-				CharacterEntity entity = CharacterEntity.EntityDict[entityId];
+				var entity = CharacterEntity.EntityDict[entityId];
 				this[entity, type] = value;
 			}
 		}
@@ -111,7 +135,7 @@ namespace Core.Events
 
 	public abstract class TriggerEventArgs : EventArgs
 	{
-		public abstract Message Serialize(Message initial);
+		public abstract Message Serialize(Message message);
 		public abstract void Deserialize(Message message);
 	}
 
@@ -124,9 +148,10 @@ namespace Core.Events
 			Damage = damage;
 		}
 
-		public override Message Serialize(Message initial)
+		public override Message Serialize(Message message)
 		{
-			throw new NotImplementedException();
+			message = Damage.Serialize(message);
+			return message;
 		}
 
 		public override void Deserialize(Message message)
@@ -138,14 +163,16 @@ namespace Core.Events
 	public class AttackEventArgs : TriggerEventArgs
 	{
 		public Weapon Weapon { get; set; }
+
 		public AttackEventArgs(Weapon weapon)
 		{
 			Weapon = weapon;
 		}
 
-		public override Message Serialize(Message initial)
+		public override Message Serialize(Message message)
 		{
-			throw new NotImplementedException();
+			message = Weapon.Serialize(message);
+			return message;
 		}
 
 		public override void Deserialize(Message message)

@@ -1,6 +1,6 @@
 ﻿namespace Core.CoreEnums
 {
-	public enum AttackType
+	public enum AttackType : ushort
 	{
 		Attack1,
 		Attack2,

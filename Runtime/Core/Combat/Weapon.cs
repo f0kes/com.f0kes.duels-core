@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core.Character;
 using Core.CoreEnums;
 using Core.Enums;
+using Core.Interfaces;
 using Core.Stats;
+using RiptideNetworking;
 using UnityEngine;
 
 namespace Core.Combat
 {
-	public class Weapon
+	public class Weapon : IIDContainer
 	{
 		public Action<Damage> OnAttackStarted;
 
@@ -71,6 +74,14 @@ namespace Core.Combat
 			{
 				Attacks.Add(new Attack(attack));
 			}
+		}
+
+		public static Weapon GetWeapon(WeaponName weaponName, ushort entityID)
+		{
+			WeaponObject weaponObject = CoreGameAssets.Singleton.WeaponObjects[weaponName];
+			CharacterEntity entity = CharacterEntity.EntityDict[entityID];
+			Weapon newWeapon = new Weapon(weaponObject, entity.Attributes, entity.Stats);
+			return newWeapon;
 		}
 
 
@@ -159,6 +170,12 @@ namespace Core.Combat
 		private float CalculateDamage(Attack attack)
 		{
 			return PlayerDamage * attack.DamageModifier;
+		}
+
+		public Message Serialize(Message message)
+		{
+			
+			return message;
 		}
 	}
 }

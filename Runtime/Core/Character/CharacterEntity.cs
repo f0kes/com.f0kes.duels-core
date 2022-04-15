@@ -14,8 +14,8 @@ namespace Core.Character
 		public static Dictionary<ushort, CharacterEntity> EntityDict = new Dictionary<ushort, CharacterEntity>();
 
 		public ushort Id { get; protected set; }
-		
-		
+
+
 		[Serializable]
 		public struct AttributeKeyValue
 		{
@@ -36,8 +36,14 @@ namespace Core.Character
 
 		private void Awake()
 		{
-			EventTrigger<DamageEventArgs>.I[this, ActionType.HitTaken]
-				.Subscribe((args) => TakeDamage(args.Damage), true);
+			EventTrigger.I[this, ActionType.HitTaken]
+				.Subscribe((args) =>
+				{
+					if (args is DamageEventArgs args1)
+					{
+						TakeDamage(args1.Damage);
+					}
+				}, true);
 		}
 
 		public void SetAttributes(float[] values)
