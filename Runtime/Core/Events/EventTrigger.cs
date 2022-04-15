@@ -120,6 +120,7 @@ namespace Core.Events
 		{
 			Damage = damage;
 		}
+		public DamageEventArgs(){}
 
 		public override Message Serialize(Message message)
 		{
@@ -129,7 +130,7 @@ namespace Core.Events
 
 		public override void Deserialize(Message message)
 		{
-			throw new NotImplementedException();
+			Damage = new Damage(message);
 		}
 	}
 
@@ -141,6 +142,7 @@ namespace Core.Events
 		{
 			Weapon = weapon;
 		}
+		public AttackEventArgs(){}
 
 		public override Message Serialize(Message message)
 		{
@@ -150,7 +152,7 @@ namespace Core.Events
 
 		public override void Deserialize(Message message)
 		{
-			throw new NotImplementedException();
+			
 		}
 	}
 }
