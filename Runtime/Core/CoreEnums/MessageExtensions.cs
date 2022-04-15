@@ -5,6 +5,7 @@
         playerSpawned = 1,
         playerMovement,
         characterStatsInit,
+        sync
     }
 
     public enum ClientToServerId : ushort
