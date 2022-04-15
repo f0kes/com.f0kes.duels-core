@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Core.Character;
 using Core.CoreEnums;
 using Core.Enums;
+using Core.Events;
 using Core.Interfaces;
 using RiptideNetworking;
 using UnityEngine;
@@ -85,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
 		if (_inputs[3])
 			inpDir.x += 1;
 
-		HandleInput(inpDir, _inputs[4], _inputs[5], _inputs[6]);
+		Move(inpDir, _inputs[4], _inputs[5], _inputs[6]);
 	}
 
 	public void SetPos(Vector3 newPosition, Vector3 moveDir, bool isLocal)
@@ -107,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	private void HandleInput(Vector2 inpDir, bool jump, bool sprint, bool attack)
+	private void Move(Vector2 inpDir, bool jump, bool sprint, bool attack)
 	{
 		Vector3 dir = Vector3.Normalize(_cameraProxy.right * inpDir.x + _cameraProxy.forward * inpDir.y);
 		float realMS = sprint ? _characterEntity.Stats[BasedStat.Speed] * 2 : _characterEntity.Stats[BasedStat.Speed];
@@ -141,6 +142,7 @@ public class PlayerMovement : MonoBehaviour
 	{
 		Message message = Message.Create(MessageSendMode.unreliable, ServerToClientId.playerMovement);
 		message.AddUShort(_player.Id);
+		message.AddUShort(Ticker.CurrentTick);
 		message.AddVector3(transform.position);
 		message.AddVector3(_moveDir);
 		_movementData = message;
