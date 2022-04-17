@@ -11,6 +11,7 @@ namespace Core.Character
 {
 	public class CharacterEntity : MonoBehaviour
 	{
+		public Action<float> OnHealthChanged;
 		public static Dictionary<ushort, CharacterEntity> EntityDict = new Dictionary<ushort, CharacterEntity>();
 
 		public ushort Id { get; protected set; }
@@ -80,7 +81,7 @@ namespace Core.Character
 		{
 			float newHealth = CurrentHealth - damage.Amount;
 			_currentHealthPercent = newHealth / Stats[BasedStat.Health];
-			Debug.Log(damage.Amount);
+			OnHealthChanged?.Invoke(_currentHealthPercent);
 			if (_currentHealthPercent <= 0)
 			{
 				_currentHealthPercent = 0;
