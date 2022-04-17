@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Core.Events
 {
@@ -11,6 +13,16 @@ namespace Core.Events
 		{
 			CurrentTick++;
 			OnTick?.Invoke(CurrentTick);
+		}
+		public static async void InvokeInTime(Action toInvoke, float time)
+		{
+			float timePassed = 0;
+			OnTick += (tick)=> { timePassed += Time.fixedDeltaTime; };
+			while (timePassed<time)
+			{
+				await Task.Yield();
+			}
+			toInvoke.Invoke();
 		}
 	}
 }
