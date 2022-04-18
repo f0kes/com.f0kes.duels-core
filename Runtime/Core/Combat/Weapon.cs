@@ -115,7 +115,7 @@ namespace Core.Combat
 		{
 			float newStamina = CurrentStamina - stamina;
 			_currentStaminaPercent = newStamina / MaxStamina.GetValue();
-			OnStaminaChanged?.Invoke(CurrentStamina);
+			OnStaminaChanged?.Invoke(_currentStaminaPercent);
 		}
 
 
