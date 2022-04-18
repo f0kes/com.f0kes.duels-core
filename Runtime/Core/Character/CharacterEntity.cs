@@ -35,6 +35,7 @@ namespace Core.Character
 		public StatDict<BasedStat> Stats = new StatDict<BasedStat>();
 
 		public float CurrentHealth => _currentHealthPercent * Stats[BasedStat.Health];
+		public CharacterCombat Combat => _combat;
 
 		private float _currentHealthPercent = 1;
 
