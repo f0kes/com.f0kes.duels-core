@@ -13,6 +13,7 @@ namespace Core.Combat
 {
 	public class Weapon
 	{
+		public Action<float> OnStaminaChanged;
 		public ElementType ElementType
 		{
 			get
@@ -36,6 +37,7 @@ namespace Core.Combat
 		public WeaponType WeaponType { get; private set; }
 		public WeaponName WeaponName { get; private set; }
 
+
 		private List<Attack> Attacks;
 		private AttributeStat _baseAttribute;
 		private Attack _currentAttack;
@@ -47,7 +49,9 @@ namespace Core.Combat
 		private float PlayerDamage => _playerStats[BasedStat.Damage];
 		private StatDict<BasedStat> _playerStats;
 
-		private float _currentStamina = 0;
+		public Stat MaxStamina { get; private set; }
+		private float _currentStaminaPercent = 0;
+		public float CurrentStamina => _currentStaminaPercent * MaxStamina.GetValue();
 
 
 		public Weapon(WeaponObject weaponObject, StatDict<AttributeStat> playerAttributes,
@@ -83,10 +87,10 @@ namespace Core.Combat
 		{
 			_playerAttributes = playerAttributes;
 			_playerStats = playerStats;
-			_currentStamina = playerStats.GetStat(BasedStat.Stamina).BaseValue;
+			_currentStaminaPercent = 1;
+			MaxStamina = _playerStats.GetStat(BasedStat.Stamina);
 		}
 
-		
 
 		public Damage GetAttackDamage()
 		{
@@ -97,7 +101,7 @@ namespace Core.Combat
 			}
 
 			_currentAttack = GetNextAttack();
-			_currentStamina -= _currentAttack.StaminaCost;
+			SubtractStamina(_currentAttack.StaminaCost);
 			_currentAttackTime = 0;
 
 
@@ -105,6 +109,13 @@ namespace Core.Combat
 			damage.OnDamageDeflected += OnDamageDeflected;
 
 			return damage;
+		}
+
+		public void SubtractStamina(float stamina)
+		{
+			float newStamina = CurrentStamina - stamina;
+			_currentStaminaPercent = newStamina / MaxStamina.GetValue();
+			OnStaminaChanged?.Invoke(CurrentStamina);
 		}
 
 
@@ -123,7 +134,7 @@ namespace Core.Combat
 		private bool CanAttack()
 		{
 			float staminaCost = GetNextAttack(false).StaminaCost;
-			if (_currentStamina < staminaCost)
+			if (CurrentStamina < staminaCost)
 			{
 				return false;
 			}
@@ -150,7 +161,7 @@ namespace Core.Combat
 			}
 
 			damageToOtherWeaponStamina *= damageMultiplier;
-			other._currentStamina -= damageToOtherWeaponStamina;
+			other.SubtractStamina(damageToOtherWeaponStamina);
 		}
 
 		private Damage GetDamage(Attack withAttack)
