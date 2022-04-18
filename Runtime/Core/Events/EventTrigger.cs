@@ -166,4 +166,23 @@ namespace Core.Events
 			
 		}
 	}
+	public class DeathEventArgs : TriggerEventArgs
+	{
+		public CharacterEntity Killer { get; set; }
+		public DeathEventArgs(){}
+		public DeathEventArgs(CharacterEntity killer)
+		{
+			Killer = killer;
+		}
+		public override Message Serialize(Message message)
+		{
+			message.AddUShort(Killer.Id);
+			return message;
+		}
+
+		public override void Deserialize(Message message)
+		{
+			Killer = CharacterEntity.EntityDict[message.GetUShort()];
+		}
+	}
 }

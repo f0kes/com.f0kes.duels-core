@@ -11,7 +11,10 @@ namespace Core.Character
 {
 	public class CharacterEntity : MonoBehaviour
 	{
+		public EntityState State { get; private set; }
+		
 		public Action<float> OnHealthChanged;
+		public Action OnDeath;
 		public static Dictionary<ushort, CharacterEntity> EntityDict = new Dictionary<ushort, CharacterEntity>();
 
 		public ushort Id { get; protected set; }
@@ -74,6 +77,11 @@ namespace Core.Character
 				Stats.SetStat(stat, BasedStatBook.GetBasedStat(stat, Attributes));
 			}
 
+			State |= EntityState.CanMove;
+			State |= EntityState.CanAttack;
+			State |= EntityState.Idle;
+			State |= EntityState.CanBeAttacked;
+			
 			_combat.Init(id, Attributes, Stats);
 		}
 
@@ -91,7 +99,8 @@ namespace Core.Character
 
 		private void Die()
 		{
-			Destroy(gameObject);
+			OnDeath?.Invoke();
+			EventTrigger.I[this, ActionType.OnDeath].Invoke( new DeathEventArgs(this));
 		}
 	}
 }
