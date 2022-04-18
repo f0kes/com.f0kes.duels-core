@@ -55,7 +55,7 @@ namespace Core.Stats
 				[AttributeStat.Light] = 1,
 				[AttributeStat.Agility] = 2
 			};
-			_dependencies[BasedStat.Speed] = new AttributeDependency(speedDependencies, 2, 1);
+			_dependencies[BasedStat.Speed] = new AttributeDependency(speedDependencies, 0.5f, 1);
 
 			var staminaDependencies = new Dictionary<AttributeStat, float>
 			{

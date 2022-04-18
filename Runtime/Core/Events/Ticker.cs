@@ -14,6 +14,10 @@ namespace Core.Events
 			CurrentTick++;
 			OnTick?.Invoke(CurrentTick);
 		}
+		public static void SetTick(ushort tick)
+		{
+			CurrentTick = tick;
+		}
 		public static async void InvokeInTime(Action toInvoke, float time)
 		{
 			float timePassed = 0;

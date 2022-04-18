@@ -134,7 +134,7 @@ namespace Core.Combat
 		private bool CanAttack()
 		{
 			float staminaCost = GetNextAttack(false).StaminaCost;
-			if (CurrentStamina < staminaCost)
+			if (CurrentStamina <= 0)
 			{
 				return false;
 			}
