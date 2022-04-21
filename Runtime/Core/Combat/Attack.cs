@@ -14,6 +14,8 @@ namespace Core.Combat
 		public AttackType AttackName;
 		public int DamageModifier;
 		
+		public Vector2 Direction;
+		
 		public float AttackPreparationTime = 0.2f;
 		public float AttackCooldownTime =0.1f;
 		public float AttackTime;
@@ -30,6 +32,7 @@ namespace Core.Combat
 			AttackTime = fromAttack.AttackTime;
 			AttackRange = fromAttack.AttackRange;
 			StaminaCost = fromAttack.StaminaCost;
+			Direction = fromAttack.Direction;
 		}
 
 		public Attack(Message fromMessage)
@@ -40,6 +43,7 @@ namespace Core.Combat
 			AttackTime = fromMessage.GetFloat();
 			AttackRange = fromMessage.GetFloat();
 			StaminaCost = fromMessage.GetFloat();
+			Direction = fromMessage.GetVector2();
 		}
 
 		public Message Serialize(Message message)
@@ -50,6 +54,7 @@ namespace Core.Combat
 			message.AddFloat(AttackTime);
 			message.AddFloat(AttackRange);
 			message.AddFloat(StaminaCost);
+			message.AddVector2(Direction);
 			return message;
 		}
 	}
