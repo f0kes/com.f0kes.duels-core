@@ -103,6 +103,8 @@ namespace Core.Combat
 			_currentAttack = GetNextAttack();
 			SubtractStamina(_currentAttack.StaminaCost);
 			_currentAttackTime = 0;
+			
+			EventTrigger.I[attacker, ActionType.OnAttackStarted].Invoke(new EmptyEventArgs());
 			List<Entity> victims = GetVictims(attacker, _currentAttack, position);
 			_currentAttack.SpellAction.Perform(victims, attacker, _currentAttack);
 		}
@@ -124,7 +126,7 @@ namespace Core.Combat
 			return victims;
 		}
 
-		private bool IsTargetAttackable(Entity attacker, Entity target)
+		private bool IsTargetAttackable(ushort attacker, ushort target)
 		{
 			return attacker != target;
 		}

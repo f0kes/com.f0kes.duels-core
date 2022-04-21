@@ -111,6 +111,7 @@ namespace Core.Events
 		public abstract Message Serialize(Message message);
 		public abstract void Deserialize(Message message);
 	}
+
 	public class EmptyEventArgs : TriggerEventArgs
 	{
 		public override Message Serialize(Message message)
@@ -131,7 +132,10 @@ namespace Core.Events
 		{
 			Damage = damage;
 		}
-		public DamageEventArgs(){}
+
+		public DamageEventArgs()
+		{
+		}
 
 		public override Message Serialize(Message message)
 		{
@@ -147,33 +151,42 @@ namespace Core.Events
 
 	public class AttackEventArgs : TriggerEventArgs
 	{
-		public Weapon Weapon { get; set; }
+		public Attack Attack;
 
-		public AttackEventArgs(Weapon weapon)
+		public AttackEventArgs(Attack attack)
 		{
-			Weapon = weapon;
+			Attack = attack;
 		}
-		public AttackEventArgs(){}
+
+		public AttackEventArgs()
+		{
+		}
 
 		public override Message Serialize(Message message)
 		{
-			message = Weapon.Serialize(message);
+			message = Attack.Serialize(message);
 			return message;
 		}
 
 		public override void Deserialize(Message message)
 		{
-			
+			Attack = new Attack(message);
 		}
 	}
+
 	public class DeathEventArgs : TriggerEventArgs
 	{
 		public Entity Killer { get; set; }
-		public DeathEventArgs(){}
+
+		public DeathEventArgs()
+		{
+		}
+
 		public DeathEventArgs(Entity killer)
 		{
 			Killer = killer;
 		}
+
 		public override Message Serialize(Message message)
 		{
 			message.AddUShort(Killer.Id);
