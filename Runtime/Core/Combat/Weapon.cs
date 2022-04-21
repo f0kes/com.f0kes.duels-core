@@ -104,7 +104,7 @@ namespace Core.Combat
 			SubtractStamina(_currentAttack.StaminaCost);
 			_currentAttackTime = 0;
 			
-			EventTrigger.I[attacker, ActionType.OnAttackStarted].Invoke(new EmptyEventArgs());
+			EventTrigger.I[attacker, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(_currentAttack));
 			List<Entity> victims = GetVictims(attacker, _currentAttack, position);
 			_currentAttack.SpellAction.Perform(victims, attacker, _currentAttack);
 		}
