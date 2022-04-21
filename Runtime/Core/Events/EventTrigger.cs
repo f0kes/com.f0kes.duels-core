@@ -9,10 +9,10 @@ namespace Core.Events
 {
 	public struct TriggerKey
 	{
-		public CharacterEntity Entity { get; }
+		public Entity Entity { get; }
 		public ActionType ActionType { get; }
 
-		public TriggerKey(CharacterEntity entity, ActionType actionType)
+		public TriggerKey(Entity entity, ActionType actionType)
 		{
 			Entity = entity;
 			ActionType = actionType;
@@ -20,7 +20,7 @@ namespace Core.Events
 
 		public TriggerKey(Message message)
 		{
-			Entity = CharacterEntity.EntityDict[message.GetUShort()];
+			Entity = Entity.EntityDict[message.GetUShort()];
 			ActionType = (ActionType) message.GetUShort();
 		}
 
@@ -87,7 +87,7 @@ namespace Core.Events
 			}
 		}
 
-		public TriggerAction<TriggerEventArgs> this[CharacterEntity entity, ActionType type]
+		public TriggerAction<TriggerEventArgs> this[Entity entity, ActionType type]
 		{
 			get
 			{
@@ -100,7 +100,7 @@ namespace Core.Events
 		{
 			get
 			{
-				var entity = CharacterEntity.EntityDict[entityId];
+				var entity = Entity.EntityDict[entityId];
 				return this[entity, type];
 			}
 		}
@@ -168,9 +168,9 @@ namespace Core.Events
 	}
 	public class DeathEventArgs : TriggerEventArgs
 	{
-		public CharacterEntity Killer { get; set; }
+		public Entity Killer { get; set; }
 		public DeathEventArgs(){}
-		public DeathEventArgs(CharacterEntity killer)
+		public DeathEventArgs(Entity killer)
 		{
 			Killer = killer;
 		}
@@ -182,7 +182,7 @@ namespace Core.Events
 
 		public override void Deserialize(Message message)
 		{
-			Killer = CharacterEntity.EntityDict[message.GetUShort()];
+			Killer = Entity.EntityDict[message.GetUShort()];
 		}
 	}
 }

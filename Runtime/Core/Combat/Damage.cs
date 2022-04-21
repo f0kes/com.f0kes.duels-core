@@ -7,7 +7,7 @@ namespace Core.Combat
 {
 	public struct Damage
 	{
-		public Action<CharacterEntity> OnDamageInflicted;
+		public Action<Entity> OnDamageInflicted;
 		public Action<Weapon> OnDamageDeflected;
 		public Attack Attack{ get; private set; }
 		public  float Amount{ get; private set; }

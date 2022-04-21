@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Core.Character
 {
-	public class CharacterCombat : MonoBehaviour
+	public class EntityCombat : MonoBehaviour
 	{
 		public Action<Damage> OnAttack;
 		public Action<Weapon> OnWeaponChange;
@@ -25,10 +25,10 @@ namespace Core.Character
 
 		private ushort _entityId;
 
-		public void Init(ushort entityId, StatDict<AttributeStat> characterAttributes,
+		public void Init(Entity entity, StatDict<AttributeStat> characterAttributes,
 			StatDict<BasedStat> characterStats)
 		{
-			_entityId = entityId;
+			_entityId = entity;
 			_attributes = characterAttributes;
 			_stats = characterStats;
 			int i = 0;
@@ -79,30 +79,15 @@ namespace Core.Character
 		{
 			if (_currentWeapon == null)
 				return;
-			Damage damage = _currentWeapon.GetAttackDamage();
-			OnAttackStarted(damage);
+			_currentWeapon.Attack(_entityId, transform.position);
+			
 		}
 
-		private void OnAttackStarted(Damage damage)
-		{
-			if(damage.Attack==null)
-				return;
-			OnAttack?.Invoke(damage);
-			Collider[] colliders = Physics.OverlapSphere(transform.position, damage.Attack.AttackRange);
-			foreach (Collider col in colliders)
-			{
-				CharacterEntity target = col.GetComponent<CharacterEntity>();
-				if (target != null && IsCharacterAttackable(target))
-				{
-					EventTrigger.I[target, ActionType.HitTaken]
-						.Invoke(new DamageEventArgs(damage));
-				}
-			}
-		}
+		
 
-		private bool IsCharacterAttackable(CharacterEntity characterEntity)
+		private bool IsCharacterAttackable(Entity entity)
 		{
-			return characterEntity.gameObject != gameObject;
+			return entity.gameObject != gameObject;
 		}
 	}
 }

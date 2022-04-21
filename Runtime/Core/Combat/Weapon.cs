@@ -14,6 +14,7 @@ namespace Core.Combat
 	public class Weapon
 	{
 		public Action<float> OnStaminaChanged;
+
 		public ElementType ElementType
 		{
 			get
@@ -92,23 +93,40 @@ namespace Core.Combat
 		}
 
 
-		public Damage GetAttackDamage()
+		public void Attack(Entity attacker, Vector3 position)
 		{
-			Damage damage = new Damage();
 			if (!CanAttack())
 			{
-				return damage;
+				return;
 			}
 
 			_currentAttack = GetNextAttack();
 			SubtractStamina(_currentAttack.StaminaCost);
 			_currentAttackTime = 0;
+			List<Entity> victims = GetVictims(attacker, _currentAttack, position);
+			_currentAttack.SpellAction.Perform(victims, attacker, _currentAttack);
+		}
 
+		private List<Entity> GetVictims(Entity attacker, Attack attack, Vector3 position)
+		{
+			//OnAttack?.Invoke(damage);
+			List<Entity> victims = new List<Entity>();
+			Collider[] colliders = Physics.OverlapSphere(position, attack.AttackRange);
+			foreach (Collider col in colliders)
+			{
+				Entity target = col.GetComponent<Entity>();
+				if (target != null && IsTargetAttackable(attacker, target))
+				{
+					victims.Add(target);
+				}
+			}
 
-			damage = GetDamage(_currentAttack);
-			damage.OnDamageDeflected += OnDamageDeflected;
+			return victims;
+		}
 
-			return damage;
+		private bool IsTargetAttackable(Entity attacker, Entity target)
+		{
+			return attacker != target;
 		}
 
 		public void SubtractStamina(float stamina)
@@ -162,19 +180,6 @@ namespace Core.Combat
 
 			damageToOtherWeaponStamina *= damageMultiplier;
 			other.SubtractStamina(damageToOtherWeaponStamina);
-		}
-
-		private Damage GetDamage(Attack withAttack)
-		{
-			var damage = new Damage(CalculateDamage(withAttack), withAttack.DamageType, withAttack);
-
-
-			return damage;
-		}
-
-		private float CalculateDamage(Attack attack)
-		{
-			return PlayerDamage * attack.DamageModifier;
 		}
 
 		public Message Serialize(Message message)

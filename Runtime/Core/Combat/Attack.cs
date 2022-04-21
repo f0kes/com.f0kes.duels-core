@@ -1,16 +1,23 @@
-﻿using Core.CoreEnums;
+﻿using Combat;
+using Core.CoreEnums;
 using Core.Enums;
 using RiptideNetworking;
+using UnityEngine;
 
 namespace Core.Combat
 {
 	[System.Serializable]
-	public class Attack
+	public class Attack 
 	{
+		public SpellAction SpellAction;
 		public DamageType DamageType;
 		public AttackType AttackName;
 		public int DamageModifier;
+		
+		public float AttackPreparationTime = 0.2f;
+		public float AttackCooldownTime =0.1f;
 		public float AttackTime;
+		
 		public float AttackRange;
 		public float StaminaCost;
 

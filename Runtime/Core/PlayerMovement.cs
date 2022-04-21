@@ -8,12 +8,13 @@ using Core.Events;
 using Core.Interfaces;
 using RiptideNetworking;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-	[SerializeField] private CharacterEntity _characterEntity;
-	[SerializeField] private CharacterCombat _characterCombat;
+	[FormerlySerializedAs("_characterEntity")] [SerializeField] private Entity entity;
+	[FormerlySerializedAs("_characterCombat")] [SerializeField] private EntityCombat entityCombat;
 	[SerializeField, SerializeReference] private Player _player;
 	[SerializeField] private Transform _cameraProxy;
 	[SerializeField] private Rigidbody _rb;
@@ -28,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
 	private bool[] _inputs;
 	private bool _attackReleased = true;
 
-	//private float MoveSpeed => _characterEntity.Stats[BasedStat.Speed];
+	//private float MoveSpeed => entity.Stats[BasedStat.Speed];
 	//private float SprintSpeed => MoveSpeed*2;
 	//private float JumpSpeed => Mathf.Sqrt(MoveSpeed/2 * -2f * Physics.gravity.magnitude);
 
@@ -53,9 +54,9 @@ public class PlayerMovement : MonoBehaviour
 			_player = GetComponent<Player>();
 		}
 
-		if (_characterEntity == null)
+		if (entity == null)
 		{
-			_characterEntity = GetComponentInParent<CharacterEntity>();
+			entity = GetComponentInParent<Entity>();
 		}
 	}
 
@@ -95,13 +96,13 @@ public class PlayerMovement : MonoBehaviour
 	private void Move(Vector2 inpDir, bool jump, bool sprint, bool attack)
 	{
 		Vector3 dir = Vector3.Normalize(_cameraProxy.right * inpDir.x + _cameraProxy.forward * inpDir.y);
-		float realMS = sprint ? _characterEntity.Stats[BasedStat.Speed] * 2 : _characterEntity.Stats[BasedStat.Speed];
+		float realMS = sprint ? entity.Stats[BasedStat.Speed] * 2 : entity.Stats[BasedStat.Speed];
 		dir *= realMS;
 
 		dir.y = _rb.velocity.y;
 		if (jump && Grounded())
 		{
-			dir.y += Mathf.Sqrt(_characterEntity.Stats[BasedStat.Speed] / 2 * -2f * Physics.gravity.y);
+			dir.y += Mathf.Sqrt(entity.Stats[BasedStat.Speed] / 2 * -2f * Physics.gravity.y);
 		}
 
 		_rb.velocity = dir;
@@ -113,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
 		else if (_attackReleased)
 		{
 			_attackReleased = false;
-			EventTrigger.I[_characterEntity, ActionType.OnAttackStarted].Invoke(new EmptyEventArgs());
+			EventTrigger.I[entity, ActionType.OnAttackStarted].Invoke(new EmptyEventArgs());
 		}
 
 		RecordMovementData();
