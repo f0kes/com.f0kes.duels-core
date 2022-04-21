@@ -8,9 +8,9 @@ namespace Combat
 {
 	public class SpellAction : ScriptableObject
 	{
-		[SerializeField] private List<SpellAction> _toAdd = new List<SpellAction>(){};
+		[SerializeField] private List<SpellAction> _toAdd = new List<SpellAction>() { };
 
-	protected List<SpellAction> _actions;
+		protected List<SpellAction> _actions;
 
 		private void Awake()
 		{

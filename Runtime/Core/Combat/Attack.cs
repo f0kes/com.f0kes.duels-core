@@ -23,6 +23,7 @@ namespace Core.Combat
 
 		public Attack(Attack fromAttack)
 		{
+			SpellAction = fromAttack.SpellAction;
 			DamageType = fromAttack.DamageType;
 			AttackName = fromAttack.AttackName;
 			DamageModifier = fromAttack.DamageModifier;
