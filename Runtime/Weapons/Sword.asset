@@ -17,7 +17,7 @@ MonoBehaviour:
     DamageType: 0
     AttackName: 0
     DamageModifier: 1
-    Direction: {x: 1, y: -1}
+    Direction: {x: -1, y: -1}
     AttackPreparationTime: 0
     AttackCooldownTime: 0
     AttackTime: 1
@@ -37,7 +37,7 @@ MonoBehaviour:
     DamageType: 0
     AttackName: 6
     DamageModifier: 1
-    Direction: {x: -1, y: -1}
+    Direction: {x: 1, y: -1}
     AttackPreparationTime: 0
     AttackCooldownTime: 0
     AttackTime: 1
