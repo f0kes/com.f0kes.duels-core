@@ -14,17 +14,19 @@ namespace Core.Character
 	{
 		public Action<Damage> OnAttack;
 		public Action<Weapon[]> OnWeaponsChanged;
-		public Action<ushort,byte> OnWeaponChange;
+		public Action<ushort, byte> OnWeaponChange;
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
+		[SerializeField] private WeaponObject _bareHands;
 		private Weapon[] _weapons = new Weapon[6];
+		private Weapon _bareHandsWeapon;
 		private Weapon _currentWeapon;
-		private int _currentWeaponIndex = 0;
+
 
 		private StatDict<AttributeStat> _attributes = new StatDict<AttributeStat>();
 		private StatDict<BasedStat> _stats = new StatDict<BasedStat>();
 
-		private int _weaponChangeTokens = 1;
+		private int _weaponChangeTokens = 5;
 
 		private ushort _entityId;
 
@@ -47,8 +49,14 @@ namespace Core.Character
 				i++;
 			}
 
+			_bareHandsWeapon = new Weapon(_bareHands, characterStats);
+
 			if (i > 0)
 				ChangeWeapon(0);
+			else
+			{
+				SetWeapon(_bareHandsWeapon);
+			}
 
 
 			EventTrigger.I[_entityId, ActionType.OnAttackStarted].Subscribe(Attack, true);
@@ -81,6 +89,7 @@ namespace Core.Character
 		{
 			if (_weapons[index] == null || _currentWeapon == _weapons[index])
 				return;
+
 			if (useToken)
 			{
 				if (_weaponChangeTokens <= 0)
@@ -91,21 +100,27 @@ namespace Core.Character
 				_weaponChangeTokens--;
 			}
 
+			Weapon toSet = _weapons[index];
+			SetWeapon(toSet);
+
+			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(index));
+			OnWeaponChange?.Invoke(_entityId, index);
+		}
+
+		private void SetWeapon(Weapon weapon)
+		{
 			if (_currentWeapon != null)
 			{
 				_currentWeapon.OnBreak -= OnWeaponBreak;
 			}
 
-			_currentWeaponIndex = index;
-			_currentWeapon = _weapons[index];
+			_currentWeapon = weapon;
 			_currentWeapon.OnBreak += OnWeaponBreak;
-			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs( index));
-			OnWeaponChange?.Invoke(_entityId, index);
 		}
 
 		private void OnWeaponBreak()
 		{
-			_currentWeapon = null;
+			SetWeapon(_bareHandsWeapon);
 			OnWeaponChange?.Invoke(_entityId, byte.MaxValue);
 			_weaponChangeTokens++;
 		}
