@@ -87,6 +87,11 @@ namespace Core.Character
 
 		public void ChangeWeapon(byte index, bool useToken = false)
 		{
+			if (index == byte.MaxValue)
+			{
+				OnWeaponBreak();
+			}
+
 			if (_weapons[index] == null || _currentWeapon == _weapons[index])
 				return;
 
@@ -122,6 +127,7 @@ namespace Core.Character
 		{
 			SetWeapon(_bareHandsWeapon);
 			OnWeaponChange?.Invoke(_entityId, byte.MaxValue);
+			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(byte.MaxValue));
 			_weaponChangeTokens++;
 		}
 
