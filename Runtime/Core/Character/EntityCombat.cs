@@ -14,7 +14,7 @@ namespace Core.Character
 	{
 		public Action<Damage> OnAttack;
 		public Action<Weapon[]> OnWeaponsChanged;
-		public Action<Weapon> OnWeaponChange;
+		public Action<ushort,byte> OnWeaponChange;
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
 		private Weapon[] _weapons = new Weapon[6];
@@ -77,7 +77,7 @@ namespace Core.Character
 			OnWeaponsChanged?.Invoke(GetWeapons());
 		}
 
-		public void ChangeWeapon(int index, bool useToken = false)
+		public void ChangeWeapon(byte index, bool useToken = false)
 		{
 			if (_weapons[index] == null || _currentWeapon == _weapons[index])
 				return;
@@ -99,13 +99,14 @@ namespace Core.Character
 			_currentWeaponIndex = index;
 			_currentWeapon = _weapons[index];
 			_currentWeapon.OnBreak += OnWeaponBreak;
-			OnWeaponChange?.Invoke(_currentWeapon);
+			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs( index));
+			OnWeaponChange?.Invoke(_entityId, index);
 		}
 
 		private void OnWeaponBreak()
 		{
 			_currentWeapon = null;
-			OnWeaponChange?.Invoke(_currentWeapon);
+			OnWeaponChange?.Invoke(_entityId, byte.MaxValue);
 			_weaponChangeTokens++;
 		}
 

@@ -6,13 +6,14 @@
         playerMovement,
         characterStatsInit,
         sync,
-        eventTriggered
+        eventTriggered,
+        weaponChange
     }
 
     public enum ClientToServerId : ushort
     {
         name = 1,
         input,
-        changeWeapon
+        changeWeapon,
     }
 }

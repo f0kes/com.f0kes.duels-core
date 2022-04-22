@@ -11,6 +11,7 @@
 		DamageDealt,
 
 		OnAttackStarted,
-		OnDeath
+		OnDeath,
+		OnWeaponChanged
 	}
 }

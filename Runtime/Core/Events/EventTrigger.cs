@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.Character;
-using Core.Combat;
 using Core.CoreEnums;
 using RiptideNetworking;
 
@@ -103,99 +102,6 @@ namespace Core.Events
 				var entity = Entity.EntityDict[entityId];
 				return this[entity, type];
 			}
-		}
-	}
-
-	public abstract class TriggerEventArgs : EventArgs
-	{
-		public abstract Message Serialize(Message message);
-		public abstract void Deserialize(Message message);
-	}
-
-	public class EmptyEventArgs : TriggerEventArgs
-	{
-		public override Message Serialize(Message message)
-		{
-			return message;
-		}
-
-		public override void Deserialize(Message message)
-		{
-		}
-	}
-
-	public class DamageEventArgs : TriggerEventArgs
-	{
-		public Damage Damage { get; set; }
-
-		public DamageEventArgs(Damage damage)
-		{
-			Damage = damage;
-		}
-
-		public DamageEventArgs()
-		{
-		}
-
-		public override Message Serialize(Message message)
-		{
-			message = Damage.Serialize(message);
-			return message;
-		}
-
-		public override void Deserialize(Message message)
-		{
-			Damage = new Damage(message);
-		}
-	}
-
-	public class AttackEventArgs : TriggerEventArgs
-	{
-		public Attack Attack;
-
-		public AttackEventArgs(Attack attack)
-		{
-			Attack = attack;
-		}
-
-		public AttackEventArgs()
-		{
-		}
-
-		public override Message Serialize(Message message)
-		{
-			message = Attack.Serialize(message);
-			return message;
-		}
-
-		public override void Deserialize(Message message)
-		{
-			Attack = new Attack(message);
-		}
-	}
-
-	public class DeathEventArgs : TriggerEventArgs
-	{
-		public Entity Killer { get; set; }
-
-		public DeathEventArgs()
-		{
-		}
-
-		public DeathEventArgs(Entity killer)
-		{
-			Killer = killer;
-		}
-
-		public override Message Serialize(Message message)
-		{
-			message.AddUShort(Killer.Id);
-			return message;
-		}
-
-		public override void Deserialize(Message message)
-		{
-			Killer = Entity.EntityDict[message.GetUShort()];
 		}
 	}
 }
