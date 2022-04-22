@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38e9ca756ffd4244b5a166489f0e982b, type: 3}
-  m_Name: New Attack Spell Action
+  m_Name: SimpleAttack
   m_EditorClassIdentifier: 
   _toAdd: []
   Type: 0

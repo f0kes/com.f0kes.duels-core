@@ -3,6 +3,7 @@
 	public enum WeaponName
 	{
 		DefaultHammer,
+		DefaultSword,
 		
 	}
 }
