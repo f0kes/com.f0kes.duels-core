@@ -4,6 +4,7 @@
 	{
 		DefaultHammer,
 		DefaultSword,
+		BareHands,
 		
 	}
 }

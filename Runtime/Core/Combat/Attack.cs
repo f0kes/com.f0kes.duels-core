@@ -12,7 +12,7 @@ namespace Core.Combat
 		public SpellAction SpellAction;
 		public DamageType DamageType;
 		public AttackType AttackName;
-		public int DamageModifier;
+		public float DamageModifier;
 		
 		public Vector2 Direction;
 		
@@ -39,7 +39,7 @@ namespace Core.Combat
 		{
 			DamageType = (DamageType)fromMessage.GetUShort();
 			AttackName = (AttackType)fromMessage.GetUShort();
-			DamageModifier = fromMessage.GetInt();
+			DamageModifier = fromMessage.GetFloat();
 			AttackTime = fromMessage.GetFloat();
 			AttackRange = fromMessage.GetFloat();
 			StaminaCost = fromMessage.GetFloat();
@@ -50,7 +50,7 @@ namespace Core.Combat
 		{
 			message.AddUShort((ushort)DamageType);
 			message.AddUShort((ushort)AttackName);
-			message.AddInt(DamageModifier);
+			message.AddFloat(DamageModifier);
 			message.AddFloat(AttackTime);
 			message.AddFloat(AttackRange);
 			message.AddFloat(StaminaCost);
