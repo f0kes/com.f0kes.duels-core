@@ -18,8 +18,7 @@ namespace Core.Character
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
 		[SerializeField] private WeaponObject _bareHands;
-		private Weapon[] _weapons = new Weapon[6];
-		private Weapon _bareHandsWeapon;
+		private Weapon[] _weapons = new Weapon[7];
 		private Weapon _currentWeapon;
 
 
@@ -49,13 +48,14 @@ namespace Core.Character
 				i++;
 			}
 
-			_bareHandsWeapon = new Weapon(_bareHands, characterStats);
+			Weapon bareHandsWeapon = new Weapon(_bareHands, characterStats);
+			AddWeapon(bareHandsWeapon, 7);
 
 			if (i > 0)
 				ChangeWeapon(0);
 			else
 			{
-				SetWeapon(_bareHandsWeapon);
+				ChangeWeapon(7);
 			}
 
 
@@ -105,30 +105,29 @@ namespace Core.Character
 				_weaponChangeTokens--;
 			}
 
-			Weapon toSet = _weapons[index];
-			SetWeapon(toSet);
+			
+			SetWeapon(index);
 
-			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(index));
-			OnWeaponChange?.Invoke(_entityId, index);
+			
 		}
 
-		private void SetWeapon(Weapon weapon)
+		private void SetWeapon(byte index)
 		{
 			if (_currentWeapon != null)
 			{
 				_currentWeapon.OnBreak -= OnWeaponBreak;
 			}
 
-			_currentWeapon = weapon;
+			_currentWeapon = _weapons[index];
 			_currentWeapon.OnBreak += OnWeaponBreak;
+			
+			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(index));
+			OnWeaponChange?.Invoke(_entityId, index);
 		}
 
 		private void OnWeaponBreak()
 		{
-			SetWeapon(_bareHandsWeapon);
-			OnWeaponChange?.Invoke(_entityId, byte.MaxValue);
-			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(byte.MaxValue));
-			_weaponChangeTokens++;
+			SetWeapon(7);
 		}
 
 
