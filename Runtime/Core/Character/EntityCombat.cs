@@ -14,14 +14,14 @@ namespace Core.Character
 	{
 		//bare hands are always on last index
 		public const byte BareHandsIndex = 6;
-		
+
 		public Action<Damage> OnAttack;
 		public Action<Weapon[]> OnWeaponsChanged;
 		public Action<ushort, byte> OnWeaponChange;
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
 		[SerializeField] private WeaponObject _bareHands;
-		private Weapon[] _weapons = new Weapon[BareHandsIndex+1];
+		private Weapon[] _weapons = new Weapon[BareHandsIndex + 1];
 		private Weapon _currentWeapon;
 
 
@@ -90,8 +90,7 @@ namespace Core.Character
 
 		public void ChangeWeapon(byte index, bool useToken = false)
 		{
-
-			if (_weapons[index] == null || _currentWeapon == _weapons[index])
+			if (_weapons[index] == null || _currentWeapon == _weapons[index] || _weapons[index].IsBroken)
 				return;
 
 			if (useToken)
@@ -104,10 +103,8 @@ namespace Core.Character
 				_weaponChangeTokens--;
 			}
 
-			
-			SetWeapon(index);
 
-			
+			SetWeapon(index);
 		}
 
 		private void SetWeapon(byte index)
@@ -119,7 +116,7 @@ namespace Core.Character
 
 			_currentWeapon = _weapons[index];
 			_currentWeapon.OnBreak += OnWeaponBreak;
-			
+
 			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(index));
 			OnWeaponChange?.Invoke(_entityId, index);
 		}
