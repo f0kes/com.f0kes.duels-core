@@ -87,10 +87,6 @@ namespace Core.Character
 
 		public void ChangeWeapon(byte index, bool useToken = false)
 		{
-			if (index == byte.MaxValue)
-			{
-				OnWeaponBreak();
-			}
 
 			if (_weapons[index] == null || _currentWeapon == _weapons[index])
 				return;
