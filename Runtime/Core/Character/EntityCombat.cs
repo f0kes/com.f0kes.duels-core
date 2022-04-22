@@ -13,6 +13,7 @@ namespace Core.Character
 	public class EntityCombat : MonoBehaviour
 	{
 		public Action<Damage> OnAttack;
+		public Action<Weapon[]> OnWeaponsChanged;
 		public Action<Weapon> OnWeaponChange;
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
@@ -55,11 +56,20 @@ namespace Core.Character
 		{
 			return _currentWeapon;
 		}
-
+		public Weapon[] GetWeapons()
+		{
+			return new List<Weapon>(_weapons).ToArray();
+		}
 		public void AddWeapon(Weapon weapon, int index)
 		{
 			_weapons[index] = weapon;
 			weapon.Equip(_attributes, _stats);
+			OnWeaponsChanged?.Invoke(GetWeapons());
+		}
+		public void RemoveWeapon(int index)
+		{
+			_weapons[index] = null;
+			OnWeaponsChanged?.Invoke(GetWeapons());
 		}
 
 		public void ChangeWeapon(int index)
