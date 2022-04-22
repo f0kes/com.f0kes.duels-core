@@ -12,13 +12,16 @@ namespace Core.Character
 {
 	public class EntityCombat : MonoBehaviour
 	{
+		//bare hands are always on last index
+		public const byte BareHandsIndex = 6;
+		
 		public Action<Damage> OnAttack;
 		public Action<Weapon[]> OnWeaponsChanged;
 		public Action<ushort, byte> OnWeaponChange;
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
 		[SerializeField] private WeaponObject _bareHands;
-		private Weapon[] _weapons = new Weapon[7];
+		private Weapon[] _weapons = new Weapon[BareHandsIndex+1];
 		private Weapon _currentWeapon;
 
 
@@ -49,13 +52,13 @@ namespace Core.Character
 			}
 
 			Weapon bareHandsWeapon = new Weapon(_bareHands, characterStats);
-			AddWeapon(bareHandsWeapon, 7);
+			AddWeapon(bareHandsWeapon, BareHandsIndex);
 
 			if (i > 0)
 				ChangeWeapon(0);
 			else
 			{
-				ChangeWeapon(7);
+				ChangeWeapon(BareHandsIndex);
 			}
 
 
@@ -123,7 +126,7 @@ namespace Core.Character
 
 		private void OnWeaponBreak()
 		{
-			SetWeapon(7);
+			SetWeapon(BareHandsIndex);
 		}
 
 
