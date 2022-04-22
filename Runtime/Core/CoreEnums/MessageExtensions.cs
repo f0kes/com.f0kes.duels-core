@@ -12,6 +12,7 @@
     public enum ClientToServerId : ushort
     {
         name = 1,
-        input
+        input,
+        changeWeapon
     }
 }

@@ -14,54 +14,35 @@ namespace Core.Combat
 	public class Weapon
 	{
 		public Action<float> OnStaminaChanged;
+		public Action OnBreak;
 
-		public ElementType ElementType
-		{
-			get
-			{
-				switch (_baseAttribute)
-				{
-					case AttributeStat.Strength:
-					case AttributeStat.Darkness:
-						return ElementType.Red;
-					case AttributeStat.Intellect:
-					case AttributeStat.Light:
-						return ElementType.Blue;
-					case AttributeStat.Agility:
-					case AttributeStat.Nature:
-					default:
-						return ElementType.Green;
-				}
-			}
-		}
 
 		public WeaponType WeaponType { get; private set; }
 		public WeaponName WeaponName { get; private set; }
 
 
 		private List<Attack> Attacks;
-		private AttributeStat _baseAttribute;
 		private Attack _currentAttack;
+
+		private bool _isBroken;
 
 		private int _currentAttackCount = 0;
 		private float _currentAttackTime = 0;
 
-		private StatDict<AttributeStat> _playerAttributes;
-		private float PlayerDamage => _playerStats[BasedStat.Damage];
 		private StatDict<BasedStat> _playerStats;
 
 		public Stat MaxStamina { get; private set; }
 		private float _currentStaminaPercent = 0;
 		public float CurrentStamina => _currentStaminaPercent * MaxStamina.GetValue();
+		public bool IsBroken => _isBroken;
 
 
-		public Weapon(WeaponObject weaponObject, StatDict<AttributeStat> playerAttributes,
+		public Weapon(WeaponObject weaponObject,
 			StatDict<BasedStat> playerStats)
 		{
-			_playerAttributes = playerAttributes;
 			_playerStats = playerStats;
 			WeaponType = weaponObject.Type;
-			_baseAttribute = weaponObject.BaseAttribute;
+
 			Attacks = new List<Attack>();
 			WeaponName = weaponObject.WeaponName;
 			foreach (var attack in weaponObject.Attacks)
@@ -83,10 +64,9 @@ namespace Core.Combat
 			_currentAttackTime += Time.fixedDeltaTime;
 		}
 
-		public void Equip(StatDict<AttributeStat> playerAttributes,
+		public void Equip(
 			StatDict<BasedStat> playerStats)
 		{
-			_playerAttributes = playerAttributes;
 			_playerStats = playerStats;
 			_currentStaminaPercent = 1;
 			MaxStamina = _playerStats.GetStat(BasedStat.Stamina);
@@ -103,7 +83,7 @@ namespace Core.Combat
 			_currentAttack = GetNextAttack();
 			SubtractStamina(_currentAttack.StaminaCost);
 			_currentAttackTime = 0;
-			
+
 			EventTrigger.I[attacker, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(_currentAttack));
 			List<Entity> victims = GetVictims(attacker, _currentAttack, position);
 			_currentAttack.SpellAction.Perform(victims, attacker, _currentAttack);
@@ -136,6 +116,10 @@ namespace Core.Combat
 			float newStamina = CurrentStamina - stamina;
 			_currentStaminaPercent = newStamina / MaxStamina.GetValue();
 			OnStaminaChanged?.Invoke(_currentStaminaPercent);
+			if (_currentStaminaPercent <= 0)
+			{
+				OnBreak?.Invoke();
+			}
 		}
 
 
@@ -159,35 +143,25 @@ namespace Core.Combat
 				return false;
 			}
 
+			if (_isBroken)
+			{
+				return false;
+			}
+
 			return _currentAttack == null || _currentAttackTime >= _currentAttack.AttackTime;
 		}
 
-		private void OnDamageDeflected(Weapon other)
-		{
-			float damageToOtherWeaponStamina = PlayerDamage * _currentAttack.DamageModifier;
-			float damageMultiplier = 1;
-			//blue stronger than red, red stronger than green, green stronger than blue
-			if (ElementType == ElementType.Red && other.ElementType == ElementType.Green)
-			{
-				damageMultiplier = 2;
-			}
-			else if (ElementType == ElementType.Blue && other.ElementType == ElementType.Red)
-			{
-				damageMultiplier = 2;
-			}
-			else if (ElementType == ElementType.Green && other.ElementType == ElementType.Blue)
-			{
-				damageMultiplier = 2;
-			}
-
-			damageToOtherWeaponStamina *= damageMultiplier;
-			other.SubtractStamina(damageToOtherWeaponStamina);
-		}
 
 		public Message Serialize(Message message)
 		{
 			message.AddUShort((ushort) WeaponType);
 			return message;
+		}
+
+		public void Break()
+		{
+			_isBroken = true;
+			OnBreak?.Invoke();
 		}
 	}
 }
