@@ -92,7 +92,7 @@ namespace Core.Combat
 				return;
 			}
 
-			Debug.Log("Enqueueing attack" + " " + Ticker.CurrentTick + " " + Random.Range(0,1));
+			Debug.Log("Enqueueing attack" + " " + Ticker.CurrentTick + " " + Random.Range(0f,1f));
 			Attack toEnqueue = GetNextAttack();
 			_attackQueue.Enqueue(toEnqueue);
 		}
