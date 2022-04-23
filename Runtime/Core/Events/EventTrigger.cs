@@ -92,7 +92,6 @@ namespace Core.Events
 			get
 			{
 				var triggerKey = new TriggerKey(entity, type);
-				Debug.Log(triggerKey);
 				return this[triggerKey];
 			}
 		}
