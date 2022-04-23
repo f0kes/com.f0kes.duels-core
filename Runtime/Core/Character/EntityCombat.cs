@@ -5,6 +5,7 @@ using Core.Combat;
 using Core.CoreEnums;
 using Core.Enums;
 using Core.Events;
+using Core.State;
 using Core.Stats;
 using UnityEngine;
 
@@ -27,8 +28,8 @@ namespace Core.Character
 		private Weapon[] _weapons = new Weapon[BareHandsIndex + 1];
 		private Weapon _currentWeapon;
 
-		private CombatState _combatState = CombatState.Idle;
-
+		private StateMachine _combatState = new StateMachine();
+		public StateMachine CombatState => _combatState;
 
 		private StatDict<AttributeStat> _attributes = new StatDict<AttributeStat>();
 		private StatDict<BasedStat> _stats = new StatDict<BasedStat>();
@@ -117,23 +118,17 @@ namespace Core.Character
 			if (_currentWeapon != null)
 			{
 				_currentWeapon.OnBreak -= OnWeaponBreak;
-				_currentWeapon.OnWeaponStateChanged -= OnWeaponStateChanged;
+				
 			}
 
 			_currentWeapon = _weapons[index];
 			_currentWeapon.OnBreak += OnWeaponBreak;
-			_currentWeapon.OnWeaponStateChanged += OnWeaponStateChanged;
+			_combatState = _currentWeapon.CombatState;
 
 			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(index));
 			OnWeaponChange?.Invoke(_entityId, index);
 			
 			
-		}
-
-		private void OnWeaponStateChanged(CombatState state)
-		{
-			_combatState = state;
-			OnCombatStateChanged?.Invoke(state);
 		}
 
 		private void OnWeaponBreak()
