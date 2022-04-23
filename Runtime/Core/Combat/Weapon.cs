@@ -90,7 +90,7 @@ namespace Core.Combat
 			{
 				return;
 			}
-			Debug.Log("Enqueueing attack");
+			Debug.Log("Enqueueing attack"+ " " + Ticker.CurrentTick);
 			Attack toEnqueue = GetNextAttack();
 			_attackQueue.Enqueue(toEnqueue);
 		}
@@ -170,6 +170,7 @@ namespace Core.Combat
 
 		private void Idle()
 		{
+			_currentAttackTime = 0;
 			_currentAttack = _attackQueue.Peek();
 			_state = CombatState.PreparingAttack;
 			OnWeaponStateChanged?.Invoke(_state, _currentAttack);
