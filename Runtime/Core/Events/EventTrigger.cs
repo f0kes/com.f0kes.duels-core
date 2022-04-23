@@ -46,10 +46,13 @@ namespace Core.Events
 			{
 				if (needsToBeAuthorised)
 				{
+					AuthorizedAction -= action;
 					AuthorizedAction += action;
+					
 				}
 				else
 				{
+					UnauthorizedAction -= action;
 					UnauthorizedAction += action;
 				}
 			}
