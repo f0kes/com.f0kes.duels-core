@@ -14,6 +14,7 @@ namespace Core.Character
 		public EntityState State { get; private set; }
 		
 		public Action<float> OnHealthChanged;
+		public Action Initialized;
 		public Action OnDeath;
 		public static Dictionary<ushort, Entity> EntityDict = new Dictionary<ushort, Entity>();
 
@@ -93,6 +94,7 @@ namespace Core.Character
 			State |= EntityState.CanBeAttacked;
 			
 			_combat.Init(this, Attributes, Stats);
+			Initialized?.Invoke();
 		}
 
 		public void TakeDamage(Damage damage)
