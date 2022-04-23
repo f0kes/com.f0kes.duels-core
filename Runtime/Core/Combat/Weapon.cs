@@ -136,6 +136,8 @@ namespace Core.Combat
 				_state = WeaponState.Attacking;
 				_currentAttackTime = 0;
 				SubtractStamina(_currentAttack.StaminaCost);
+				
+				Debug.Log("Attack started");
 			}
 		}
 
@@ -147,6 +149,7 @@ namespace Core.Combat
 				_state = WeaponState.Cooldown;
 				_currentAttackTime = 0;
 				_currentAttack.SpellAction.Perform(_pendingVictims, _wielder, _currentAttack);
+				Debug.Log("Attack finished");
 			}
 			else
 			{
@@ -163,11 +166,13 @@ namespace Core.Combat
 				_state = WeaponState.Idle;
 				_currentAttackTime = 0;
 				_attackQueue.Dequeue();
+				Debug.Log("Attack cooldown finished");
 			}
 		}
 
 		private void Idle()
 		{
+			Debug.Log("Idle");
 			_currentAttack = _attackQueue.Peek();
 			_state = WeaponState.PreparingAttack;
 		}
