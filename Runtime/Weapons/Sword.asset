@@ -18,8 +18,8 @@ MonoBehaviour:
     AttackName: 0
     DamageModifier: 1
     Direction: {x: -1, y: -1}
-    AttackPreparationTime: 0
-    AttackCooldownTime: 0
+    PreparationTime: 0.3
+    CooldownTime: 0.3
     AttackTime: 1
     AttackRange: 4.5
     StaminaCost: 10
@@ -28,8 +28,8 @@ MonoBehaviour:
     AttackName: 1
     DamageModifier: 1
     Direction: {x: 1, y: -1}
-    AttackPreparationTime: 0
-    AttackCooldownTime: 0
+    PreparationTime: 0.3
+    CooldownTime: 0.3
     AttackTime: 1
     AttackRange: 4.5
     StaminaCost: 10
@@ -38,8 +38,8 @@ MonoBehaviour:
     AttackName: 6
     DamageModifier: 1
     Direction: {x: 1, y: -1}
-    AttackPreparationTime: 0
-    AttackCooldownTime: 0
+    PreparationTime: 0.1
+    CooldownTime: 0.1
     AttackTime: 1
     AttackRange: 4.5
     StaminaCost: 10
