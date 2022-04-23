@@ -35,7 +35,7 @@ namespace Core.Character
 		public void Init(Entity entity, StatDict<AttributeStat> characterAttributes,
 			StatDict<BasedStat> characterStats)
 		{
-			_entityId = entity;
+			_entityId = entity.Id;
 			_attributes = characterAttributes;
 			_stats = characterStats;
 			int i = 0;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Core.Character;
 using Core.CoreEnums;
 using RiptideNetworking;
+using UnityEngine;
 
 namespace Core.Events
 {
@@ -91,6 +92,7 @@ namespace Core.Events
 			get
 			{
 				var triggerKey = new TriggerKey(entity, type);
+				Debug.Log(triggerKey);
 				return this[triggerKey];
 			}
 		}

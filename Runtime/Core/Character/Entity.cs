@@ -92,7 +92,7 @@ namespace Core.Character
 			State |= EntityState.Idle;
 			State |= EntityState.CanBeAttacked;
 			
-			_combat.Init(id, Attributes, Stats);
+			_combat.Init(this, Attributes, Stats);
 		}
 
 		public void TakeDamage(Damage damage)

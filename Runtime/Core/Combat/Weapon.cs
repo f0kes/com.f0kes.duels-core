@@ -33,7 +33,7 @@ namespace Core.Combat
 
 		private List<Attack> Attacks;
 		private Attack _currentAttack;
-		private WeaponState _state;
+		private WeaponState _state = WeaponState.Idle;
 
 		private int _currentAttackCount = 0;
 		private float _currentAttackTime = 0;
@@ -99,7 +99,7 @@ namespace Core.Combat
 			}
 
 			Attack toEnqueue = GetNextAttack();
-			EventTrigger.I[_wielder, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(toEnqueue));
+		//	EventTrigger.I[_wielder, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(toEnqueue));
 			_attackQueue.Enqueue(toEnqueue);
 		}
 
@@ -194,7 +194,7 @@ namespace Core.Combat
 			return victims;
 		}
 
-		private bool IsTargetAttackable(ushort attacker, ushort target)
+		private bool IsTargetAttackable(Entity attacker, Entity target)
 		{
 			return attacker != target;
 		}
