@@ -8,6 +8,7 @@ using Core.Interfaces;
 using Core.Stats;
 using RiptideNetworking;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Core.Combat
 {
@@ -91,7 +92,7 @@ namespace Core.Combat
 				return;
 			}
 
-			Debug.Log("Enqueueing attack" + " " + Ticker.CurrentTick + " " + _currentAttack.AttackName);
+			Debug.Log("Enqueueing attack" + " " + Ticker.CurrentTick + " " + Random.Range(0,1));
 			Attack toEnqueue = GetNextAttack();
 			_attackQueue.Enqueue(toEnqueue);
 		}
