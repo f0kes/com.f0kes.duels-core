@@ -92,7 +92,6 @@ namespace Core.Combat
 			}
 
 			Attack toEnqueue = GetNextAttack();
-			//	EventTrigger.I[_wielder, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(toEnqueue));
 			_attackQueue.Enqueue(toEnqueue);
 		}
 
@@ -125,6 +124,8 @@ namespace Core.Combat
 			var prepareTime = _currentAttack.PreparationTime;
 			if (_currentAttackTime >= prepareTime)
 			{
+				Debug.Log("Attack prepared" + " " + Ticker.CurrentTick);
+
 				_pendingVictims.Clear();
 				_state = CombatState.Attacking;
 				_currentAttackTime = 0;
@@ -139,6 +140,8 @@ namespace Core.Combat
 			var attackTime = _currentAttack.AttackTime;
 			if (_currentAttackTime >= attackTime)
 			{
+				Debug.Log("Attack performed" + " " + Ticker.CurrentTick);
+
 				_state = CombatState.Cooldown;
 				_currentAttackTime = 0;
 				_currentAttack.SpellAction.Perform(_pendingVictims, _wielder, _currentAttack);
@@ -156,6 +159,7 @@ namespace Core.Combat
 			float cooldownTime = _currentAttack.CooldownTime;
 			if (_currentAttackTime >= cooldownTime)
 			{
+				Debug.Log("Cooldown finished" + " " + Ticker.CurrentTick);
 				_state = CombatState.Idle;
 				_currentAttackTime = 0;
 				_attackQueue.Dequeue();
