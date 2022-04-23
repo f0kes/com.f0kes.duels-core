@@ -12,6 +12,8 @@ namespace Core.Character
 {
 	public class EntityCombat : MonoBehaviour
 	{
+		public ushort WeaponChangeTokens => _weaponChangeTokens;
+		
 		//bare hands are always on last index
 		public const byte BareHandsIndex = 6;
 
@@ -30,7 +32,7 @@ namespace Core.Character
 		private StatDict<AttributeStat> _attributes = new StatDict<AttributeStat>();
 		private StatDict<BasedStat> _stats = new StatDict<BasedStat>();
 
-		private int _weaponChangeTokens = 5;
+		private ushort _weaponChangeTokens = 5;
 
 		private ushort _entityId;
 
