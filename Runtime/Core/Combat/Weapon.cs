@@ -15,7 +15,7 @@ namespace Core.Combat
 	{
 		public Action<float> OnStaminaChanged;
 		public Action OnBreak;
-		public Action<CombatState> OnWeaponStateChanged;
+		public Action<CombatState, Attack> OnWeaponStateChanged;
 
 		private Queue<Attack> _attackQueue = new Queue<Attack>();
 
@@ -92,7 +92,7 @@ namespace Core.Combat
 			}
 
 			Attack toEnqueue = GetNextAttack();
-		//	EventTrigger.I[_wielder, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(toEnqueue));
+			//	EventTrigger.I[_wielder, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(toEnqueue));
 			_attackQueue.Enqueue(toEnqueue);
 		}
 
@@ -129,8 +129,8 @@ namespace Core.Combat
 				_state = CombatState.Attacking;
 				_currentAttackTime = 0;
 				SubtractStamina(_currentAttack.StaminaCost);
-				
-				Debug.Log("Attack started");
+
+				OnWeaponStateChanged?.Invoke(_state, _currentAttack);
 			}
 		}
 
@@ -142,7 +142,7 @@ namespace Core.Combat
 				_state = CombatState.Cooldown;
 				_currentAttackTime = 0;
 				_currentAttack.SpellAction.Perform(_pendingVictims, _wielder, _currentAttack);
-				Debug.Log("Attack finished");
+				OnWeaponStateChanged?.Invoke(_state, _currentAttack);
 			}
 			else
 			{
@@ -159,15 +159,16 @@ namespace Core.Combat
 				_state = CombatState.Idle;
 				_currentAttackTime = 0;
 				_attackQueue.Dequeue();
-				Debug.Log("Attack cooldown finished");
+
+				OnWeaponStateChanged?.Invoke(_state, _currentAttack);
 			}
 		}
 
 		private void Idle()
 		{
-			Debug.Log("Idle");
 			_currentAttack = _attackQueue.Peek();
 			_state = CombatState.PreparingAttack;
+			OnWeaponStateChanged?.Invoke(_state, _currentAttack);
 		}
 
 		private List<Entity> GetVictims(Entity attacker, Attack attack, Vector3 position)

@@ -19,7 +19,7 @@ namespace Core.Character
 
 		public Action<Damage> OnAttack;
 		public Action<Weapon[]> OnWeaponsChanged;
-		public Action<CombatState> OnCombatStateChanged;
+		public Action<CombatState, Attack> OnCombatStateChanged;
 		public Action<ushort, byte> OnWeaponChange;
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
@@ -130,10 +130,10 @@ namespace Core.Character
 			
 		}
 
-		private void OnWeaponStateChanged(CombatState state)
+		private void OnWeaponStateChanged(CombatState state, Attack attack)
 		{
 			_combatState = state;
-			OnCombatStateChanged?.Invoke(state);
+			OnCombatStateChanged?.Invoke(state,attack);
 		}
 
 		private void OnWeaponBreak()
