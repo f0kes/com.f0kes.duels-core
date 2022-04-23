@@ -13,16 +13,9 @@ namespace Core.Combat
 {
 	public class Weapon
 	{
-		public enum WeaponState : ushort
-		{
-			PreparingAttack,
-			Attacking,
-			Cooldown,
-			Idle
-		}
-
 		public Action<float> OnStaminaChanged;
 		public Action OnBreak;
+		public Action<CombatState> OnWeaponStateChanged;
 
 		private Queue<Attack> _attackQueue = new Queue<Attack>();
 
@@ -33,7 +26,7 @@ namespace Core.Combat
 
 		private List<Attack> Attacks;
 		private Attack _currentAttack;
-		private WeaponState _state = WeaponState.Idle;
+		private CombatState _state = CombatState.Idle;
 
 		private int _currentAttackCount = 0;
 		private float _currentAttackTime = 0;
@@ -110,16 +103,16 @@ namespace Core.Combat
 
 			switch (_state)
 			{
-				case WeaponState.PreparingAttack:
+				case CombatState.PreparingAttack:
 					PrepareAttack();
 					break;
-				case WeaponState.Attacking:
+				case CombatState.Attacking:
 					PerformAttack();
 					break;
-				case WeaponState.Cooldown:
+				case CombatState.Cooldown:
 					Cooldown();
 					break;
-				case WeaponState.Idle:
+				case CombatState.Idle:
 					Idle();
 					break;
 				default:
@@ -133,7 +126,7 @@ namespace Core.Combat
 			if (_currentAttackTime >= prepareTime)
 			{
 				_pendingVictims.Clear();
-				_state = WeaponState.Attacking;
+				_state = CombatState.Attacking;
 				_currentAttackTime = 0;
 				SubtractStamina(_currentAttack.StaminaCost);
 				
@@ -146,7 +139,7 @@ namespace Core.Combat
 			var attackTime = _currentAttack.AttackTime;
 			if (_currentAttackTime >= attackTime)
 			{
-				_state = WeaponState.Cooldown;
+				_state = CombatState.Cooldown;
 				_currentAttackTime = 0;
 				_currentAttack.SpellAction.Perform(_pendingVictims, _wielder, _currentAttack);
 				Debug.Log("Attack finished");
@@ -163,7 +156,7 @@ namespace Core.Combat
 			float cooldownTime = _currentAttack.CooldownTime;
 			if (_currentAttackTime >= cooldownTime)
 			{
-				_state = WeaponState.Idle;
+				_state = CombatState.Idle;
 				_currentAttackTime = 0;
 				_attackQueue.Dequeue();
 				Debug.Log("Attack cooldown finished");
@@ -174,7 +167,7 @@ namespace Core.Combat
 		{
 			Debug.Log("Idle");
 			_currentAttack = _attackQueue.Peek();
-			_state = WeaponState.PreparingAttack;
+			_state = CombatState.PreparingAttack;
 		}
 
 		private List<Entity> GetVictims(Entity attacker, Attack attack, Vector3 position)

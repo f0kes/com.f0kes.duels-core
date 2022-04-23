@@ -24,6 +24,8 @@ namespace Core.Character
 		private Weapon[] _weapons = new Weapon[BareHandsIndex + 1];
 		private Weapon _currentWeapon;
 
+		private CombatState _combatState = CombatState.Idle;
+
 
 		private StatDict<AttributeStat> _attributes = new StatDict<AttributeStat>();
 		private StatDict<BasedStat> _stats = new StatDict<BasedStat>();
@@ -112,13 +114,22 @@ namespace Core.Character
 			if (_currentWeapon != null)
 			{
 				_currentWeapon.OnBreak -= OnWeaponBreak;
+				_currentWeapon.OnWeaponStateChanged -= OnWeaponStateChanged;
 			}
 
 			_currentWeapon = _weapons[index];
 			_currentWeapon.OnBreak += OnWeaponBreak;
+			_currentWeapon.OnWeaponStateChanged += OnWeaponStateChanged;
 
 			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(index));
 			OnWeaponChange?.Invoke(_entityId, index);
+			
+			
+		}
+
+		private void OnWeaponStateChanged(CombatState state)
+		{
+			_combatState = state;
 		}
 
 		private void OnWeaponBreak()
