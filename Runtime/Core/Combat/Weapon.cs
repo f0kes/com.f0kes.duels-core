@@ -13,8 +13,18 @@ namespace Core.Combat
 {
 	public class Weapon
 	{
+		public enum WeaponState : ushort
+		{
+			PreparingAttack,
+			Attacking,
+			Cooldown,
+			Idle
+		}
+
 		public Action<float> OnStaminaChanged;
 		public Action OnBreak;
+
+		private Queue<Attack> _attackQueue = new Queue<Attack>();
 
 
 		public WeaponType WeaponType { get; private set; }
@@ -23,13 +33,19 @@ namespace Core.Combat
 
 		private List<Attack> Attacks;
 		private Attack _currentAttack;
-
-		private bool _isBroken;
+		private WeaponState _state;
 
 		private int _currentAttackCount = 0;
 		private float _currentAttackTime = 0;
 
+		private List<Entity> _pendingVictims = new List<Entity>();
+
+
+		private bool _isBroken;
+
+
 		private StatDict<BasedStat> _playerStats;
+		private Entity _wielder;
 
 		public Stat MaxStamina { get; private set; }
 		private float _currentStaminaPercent = 0;
@@ -53,6 +69,15 @@ namespace Core.Combat
 			Init();
 		}
 
+		public void Equip(
+			StatDict<BasedStat> playerStats, Entity wielder)
+		{
+			_wielder = wielder;
+			_playerStats = playerStats;
+			_currentStaminaPercent = 1;
+			MaxStamina = _playerStats.GetStat(BasedStat.Stamina);
+		}
+
 
 		public void Init()
 		{
@@ -62,31 +87,89 @@ namespace Core.Combat
 		private void OnTick(ushort obj)
 		{
 			_currentAttackTime += Time.fixedDeltaTime;
-		}
-
-		public void Equip(
-			StatDict<BasedStat> playerStats)
-		{
-			_playerStats = playerStats;
-			_currentStaminaPercent = 1;
-			MaxStamina = _playerStats.GetStat(BasedStat.Stamina);
+			ProcessAttackQueue();
 		}
 
 
-		public void Attack(Entity attacker, Vector3 position)
+		public void EnqueueAttack()
 		{
 			if (!CanAttack())
 			{
 				return;
 			}
 
-			_currentAttack = GetNextAttack();
-			SubtractStamina(_currentAttack.StaminaCost);
-			_currentAttackTime = 0;
+			Attack toEnqueue = GetNextAttack();
+			EventTrigger.I[_wielder, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(toEnqueue));
+			_attackQueue.Enqueue(toEnqueue);
+		}
 
-			EventTrigger.I[attacker, ActionType.OnAttackStarted].Invoke(new AttackEventArgs(_currentAttack));
-			List<Entity> victims = GetVictims(attacker, _currentAttack, position);
-			_currentAttack.SpellAction.Perform(victims, attacker, _currentAttack);
+		private void ProcessAttackQueue()
+		{
+			if (_attackQueue.Count == 0)
+				return;
+
+			switch (_state)
+			{
+				case WeaponState.PreparingAttack:
+					PrepareAttack();
+					break;
+				case WeaponState.Attacking:
+					PerformAttack();
+					break;
+				case WeaponState.Cooldown:
+					Cooldown();
+					break;
+				case WeaponState.Idle:
+					Idle();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		private void PrepareAttack()
+		{
+			var prepareTime = _currentAttack.PreparationTime;
+			if (_currentAttackTime >= prepareTime)
+			{
+				_pendingVictims.Clear();
+				_state = WeaponState.Attacking;
+				_currentAttackTime = 0;
+				SubtractStamina(_currentAttack.StaminaCost);
+			}
+		}
+
+		private void PerformAttack()
+		{
+			var attackTime = _currentAttack.AttackTime;
+			if (_currentAttackTime >= attackTime)
+			{
+				_state = WeaponState.Cooldown;
+				_currentAttackTime = 0;
+				_currentAttack.SpellAction.Perform(_pendingVictims, _wielder, _currentAttack);
+			}
+			else
+			{
+				List<Entity> victims = GetVictims(_wielder, _currentAttack, _wielder.transform.position);
+				_pendingVictims.AddRange(victims);
+			}
+		}
+
+		private void Cooldown()
+		{
+			float cooldownTime = _currentAttack.CooldownTime;
+			if (_currentAttackTime >= cooldownTime)
+			{
+				_state = WeaponState.Idle;
+				_currentAttackTime = 0;
+				_attackQueue.Dequeue();
+			}
+		}
+
+		private void Idle()
+		{
+			_currentAttack = _attackQueue.Peek();
+			_state = WeaponState.PreparingAttack;
 		}
 
 		private List<Entity> GetVictims(Entity attacker, Attack attack, Vector3 position)
@@ -137,18 +220,13 @@ namespace Core.Combat
 
 		private bool CanAttack()
 		{
-			float staminaCost = GetNextAttack(false).StaminaCost;
+			var staminaCost = GetNextAttack(false).StaminaCost;
 			if (CurrentStamina <= 0)
 			{
 				return false;
 			}
 
-			if (_isBroken)
-			{
-				return false;
-			}
-
-			return _currentAttack == null || _currentAttackTime >= _currentAttack.AttackTime;
+			return !_isBroken;
 		}
 
 

@@ -3,6 +3,7 @@ using Core.CoreEnums;
 using Core.Enums;
 using RiptideNetworking;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Core.Combat
 {
@@ -16,8 +17,8 @@ namespace Core.Combat
 		
 		public Vector2 Direction;
 		
-		public float AttackPreparationTime = 0.2f;
-		public float AttackCooldownTime =0.1f;
+		[FormerlySerializedAs("AttackPreparationTime")] public float PreparationTime = 0.2f;
+		public float CooldownTime =0.1f;
 		public float AttackTime;
 		
 		public float AttackRange;

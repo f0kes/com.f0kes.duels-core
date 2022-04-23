@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Combat
 {
-	[CreateAssetMenu(fileName = "New Attack Spell Action", menuName = "SpellActions/AttackSpellAction")]
+	[CreateAssetMenu(fileName = "New EnqueueAttack Spell Action", menuName = "SpellActions/AttackSpellAction")]
 	public class AttackSpellAction : SpellAction
 	{
 		public DamageType Type = DamageType.Physical;

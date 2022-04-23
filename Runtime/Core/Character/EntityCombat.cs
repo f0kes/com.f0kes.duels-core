@@ -78,7 +78,7 @@ namespace Core.Character
 		public void AddWeapon(Weapon weapon, int index)
 		{
 			_weapons[index] = weapon;
-			weapon.Equip(_stats);
+			weapon.Equip(_stats, _entityId);
 			OnWeaponsChanged?.Invoke(GetWeapons());
 		}
 
@@ -131,7 +131,7 @@ namespace Core.Character
 		{
 			if (_currentWeapon == null)
 				return;
-			_currentWeapon.Attack(_entityId, transform.position);
+			_currentWeapon.EnqueueAttack();
 		}
 
 
