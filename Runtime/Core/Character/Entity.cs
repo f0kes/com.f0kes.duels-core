@@ -5,6 +5,7 @@ using Core.CoreEnums;
 using Core.Stats;
 using Core.Enums;
 using Core.Events;
+using Core.StatResource;
 using UnityEngine;
 
 namespace Core.Character
@@ -12,10 +13,11 @@ namespace Core.Character
 	public class Entity : MonoBehaviour
 	{
 		public EntityState State { get; private set; }
-		
+
 		public Action<float> OnHealthChanged;
 		public Action Initialized;
 		public Action OnDeath;
+		
 		public static Dictionary<ushort, Entity> EntityDict = new Dictionary<ushort, Entity>();
 
 		public ushort Id { get; protected set; }
@@ -34,16 +36,15 @@ namespace Core.Character
 
 		public StatDict<AttributeStat> Attributes = new StatDict<AttributeStat>();
 		public StatDict<BasedStat> Stats = new StatDict<BasedStat>();
-
-		public float CurrentHealth => _currentHealthPercent * Stats[BasedStat.Health];
+		private ResourceContainer _health;
 		public EntityCombat Combat => _combat;
 
-		private float _currentHealthPercent = 1;
-		
+
 		public static implicit operator ushort(Entity entity)
 		{
 			return entity == null ? ushort.MinValue : entity.Id;
 		}
+
 		public static implicit operator Entity(ushort id)
 		{
 			return EntityDict.ContainsKey(id) ? EntityDict[id] : null;
@@ -92,27 +93,23 @@ namespace Core.Character
 			State |= EntityState.CanAttack;
 			State |= EntityState.Idle;
 			State |= EntityState.CanBeAttacked;
-			
+
 			_combat.Init(this, Attributes, Stats, new CombatStateContainer());
+			_health = new ResourceContainer(Stats.GetStat(BasedStat.Health));
+			_health.OnDepleted += Die;
 			Initialized?.Invoke();
 		}
 
 		public void TakeDamage(Damage damage)
 		{
-			float newHealth = CurrentHealth - damage.Amount;
-			_currentHealthPercent = newHealth / Stats[BasedStat.Health];
-			OnHealthChanged?.Invoke(_currentHealthPercent);
-			if (_currentHealthPercent <= 0)
-			{
-				_currentHealthPercent = 0;
-				Die();
-			}
+			_health.SubtractValue(damage.Amount);
+			OnHealthChanged?.Invoke(_health.RemainingPercent);
 		}
 
 		private void Die()
 		{
 			OnDeath?.Invoke();
-			EventTrigger.I[this, ActionType.OnDeath].Invoke( new DeathEventArgs(this));
+			EventTrigger.I[this, ActionType.OnDeath].Invoke(new DeathEventArgs(this));
 		}
 	}
 }

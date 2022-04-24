@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
+using Combat;
 using Core.Character;
-using Core.Combat;
 using Core.CoreEnums;
 using Core.Enums;
 using Core.Events;
 using UnityEngine;
 
-namespace Combat
+namespace Core.Combat
 {
 	[CreateAssetMenu(fileName = "New EnqueueAttack Spell Action", menuName = "SpellActions/AttackSpellAction")]
 	public class AttackSpellAction : SpellAction
