@@ -147,7 +147,7 @@ namespace Core.Character
 
 		public Message Serialize(Message message)
 		{
-			foreach (var weapon in _weapons)
+			foreach (var weapon in _weapons.ToList())
 			{
 				weapon.Serialize(message);
 			}
@@ -157,7 +157,7 @@ namespace Core.Character
 
 		public void Deserialize(Message message)
 		{
-			foreach (var weapon in _weapons)
+			foreach (var weapon in _weapons.ToList())
 			{
 				weapon.Deserialize(message);
 			}
