@@ -55,7 +55,7 @@ namespace Core.Combat
 
 			Stamina = new ResourceContainer(staminaStat);
 			Stamina.OnValueChanged += (newStamina)=> OnStaminaChanged?.Invoke(newStamina);
-			Stamina.OnDepleted += ()=> OnBreak?.Invoke();
+			Stamina.OnDepleted += Break;
 
 			CombatStateContainer = combatStateContainer;
 			_weaponQueueProcessor = new WeaponQueueProcessor(victimGetter, wielder, Stamina, combatStateContainer);
@@ -111,8 +111,9 @@ namespace Core.Combat
 
 		public Message Serialize(Message message)
 		{
-			// message.AddUShort((ushort) _currentAttackCount);
-			// Stamina.Serialize(message);
+			 message.AddUShort((ushort) _currentAttackCount);
+			 Stamina.Serialize(message);
+			 message.AddBool(_isBroken);
 			// CombatStateContainer.Serialize(message);
 			// _weaponQueueProcessor.Serialize(message);
 			return message;
@@ -120,7 +121,9 @@ namespace Core.Combat
 
 		public void Deserialize(Message message)
 		{
-			throw new NotImplementedException();
+			_currentAttackCount = message.GetUShort();
+			Stamina.Deserialize(message);
+			_isBroken = message.GetBool();
 		}
 
 		public void Break()

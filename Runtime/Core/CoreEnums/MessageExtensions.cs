@@ -7,7 +7,8 @@
         characterStatsInit,
         sync,
         eventTriggered,
-        weaponChange
+        weaponChange,
+        combatData
     }
 
     public enum ClientToServerId : ushort

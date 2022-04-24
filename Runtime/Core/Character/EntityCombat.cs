@@ -5,12 +5,14 @@ using Core.Combat;
 using Core.CoreEnums;
 using Core.Enums;
 using Core.Events;
+using Core.Interfaces;
 using Core.Stats;
+using RiptideNetworking;
 using UnityEngine;
 
 namespace Core.Character
 {
-	public class EntityCombat : MonoBehaviour
+	public class EntityCombat : MonoBehaviour, ISerializableData
 	{
 		public ushort WeaponChangeTokens => _weaponChangeTokens;
 
@@ -142,6 +144,23 @@ namespace Core.Character
 				return;
 			_currentWeapon.EnqueueAttack();
 		}
-		
+
+		public Message Serialize(Message message)
+		{
+			foreach (var weapon in _weapons)
+			{
+				weapon.Serialize(message);
+			}
+
+			return message;
+		}
+
+		public void Deserialize(Message message)
+		{
+			foreach (var weapon in _weapons)
+			{
+				weapon.Deserialize(message);
+			}
+		}
 	}
 }
