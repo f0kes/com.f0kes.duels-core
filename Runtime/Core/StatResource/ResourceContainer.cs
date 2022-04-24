@@ -60,6 +60,7 @@ namespace Core.StatResource
 		{
 			//Capacity.Deserialize(message);
 			_remainingPercent = message.GetFloat();
+			OnValueChanged?.Invoke(_remainingPercent);
 		}
 	}
 }
