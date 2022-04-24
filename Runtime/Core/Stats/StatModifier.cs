@@ -10,6 +10,11 @@ namespace Core.Stats
 
 		public string Name => GetType().ToString();
 		public float priority;
+
+		public StatModifier()
+		{
+			
+		}
 		
 		public StatModifier(float value, float priority)
 		{
@@ -69,9 +74,24 @@ namespace Core.Stats
 			_basedUpon = basedUpon;
 		}
 
+		public StatModifierMultiplyStat()
+		{
+			
+		}
+
 		public override void ApplyMod(ref float finalStat, float baseValue)
 		{
 			finalStat += Value * _basedUpon.GetValue();
+		}
+
+		public override void Serialize(BinaryWriter bw)
+		{
+			base.Serialize(bw);
+		}
+
+		public override void Deserialize(BinaryReader br)
+		{
+			base.Deserialize(br);
 		}
 	}
 

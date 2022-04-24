@@ -51,14 +51,14 @@ namespace Core.StatResource
 
 		public Message Serialize(Message message)
 		{
-			Capacity.Serialize(message);
+			//Capacity.Serialize(message);
 			message.AddFloat(_remainingPercent);
 			return message;
 		}
 
 		public void Deserialize(Message message)
 		{
-			Capacity.Deserialize(message);
+			//Capacity.Deserialize(message);
 			_remainingPercent = message.GetFloat();
 		}
 	}
