@@ -6,16 +6,18 @@ namespace Core.StatResource
 {
 	public class ResourceContainer
 	{
+		public Stat Capacity { get; private set; }
 		public Action<float> OnValueChanged;
 		public Action OnDepleted;
-		private Stat _capacity;
+		
 		private float _remainingPercent;
 
 		public float CurrentValue => _remainingPercent * _capacity.GetValue();
+		
 
 		public ResourceContainer(Stat capacity, float initialValue = 1)
 		{
-			_capacity = capacity;
+			Capacity = capacity;
 			_remainingPercent = initialValue;
 		}
 
