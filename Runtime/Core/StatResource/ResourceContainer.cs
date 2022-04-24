@@ -12,7 +12,7 @@ namespace Core.StatResource
 		
 		private float _remainingPercent;
 
-		public float CurrentValue => _remainingPercent * _capacity.GetValue();
+		public float CurrentValue => _remainingPercent * Capacity.GetValue();
 		
 
 		public ResourceContainer(Stat capacity, float initialValue = 1)
@@ -30,7 +30,7 @@ namespace Core.StatResource
 				newValue = 0;
 			}
 
-			_remainingPercent = newValue / _capacity.GetValue();
+			_remainingPercent = newValue / Capacity.GetValue();
 			OnValueChanged?.Invoke(_remainingPercent);
 			if (_remainingPercent <= 0)
 			{
@@ -41,8 +41,8 @@ namespace Core.StatResource
 		public void AddValue(float value)
 		{
 			float newValue = CurrentValue + value;
-			newValue = Mathf.Min(newValue, _capacity.GetValue());
-			_remainingPercent = newValue / _capacity.GetValue();
+			newValue = Mathf.Min(newValue, Capacity.GetValue());
+			_remainingPercent = newValue / Capacity.GetValue();
 			OnValueChanged?.Invoke(_remainingPercent);
 		}
 	}
