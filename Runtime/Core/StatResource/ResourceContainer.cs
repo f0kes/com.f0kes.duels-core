@@ -13,6 +13,7 @@ namespace Core.StatResource
 		private float _remainingPercent;
 
 		public float CurrentValue => _remainingPercent * Capacity.GetValue();
+		public float RemainingPercent => _remainingPercent;
 		
 
 		public ResourceContainer(Stat capacity, float initialValue = 1)
