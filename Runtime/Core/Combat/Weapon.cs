@@ -36,7 +36,7 @@ namespace Core.Combat
 		public ResourceContainer Stamina { get; private set; }
 		public CombatStateContainer CombatStateContainer { get; private set; }
 		
-		private readonly WeaponQueueProcessor _weaponQueueProcessor;
+		private WeaponQueueProcessor _weaponQueueProcessor;
 		
 
 		public bool IsBroken => _isBroken;
@@ -111,8 +111,16 @@ namespace Core.Combat
 
 		public Message Serialize(Message message)
 		{
-			message.AddUShort((ushort) WeaponType);
+			// message.AddUShort((ushort) _currentAttackCount);
+			// Stamina.Serialize(message);
+			// CombatStateContainer.Serialize(message);
+			// _weaponQueueProcessor.Serialize(message);
 			return message;
+		}
+
+		public void Deserialize(Message message)
+		{
+			throw new NotImplementedException();
 		}
 
 		public void Break()

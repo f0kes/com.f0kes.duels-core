@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Core.Interfaces;
+using RiptideNetworking;
 
 namespace Core.Stats
 {
@@ -31,6 +32,19 @@ namespace Core.Stats
 		{
 			Value = br.ReadSingle();
 			priority = br.ReadSingle();
+		}
+
+		public Message Serialize(Message message)
+		{
+			message.AddFloat(Value);
+			message.AddFloat(priority);
+			return message;
+		}
+
+		public void Deserialize(Message message)
+		{
+			Value = message.GetFloat();
+			priority = message.GetFloat();
 		}
 	}
 

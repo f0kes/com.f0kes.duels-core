@@ -1,10 +1,11 @@
 ﻿using System.IO;
+using RiptideNetworking;
 
 namespace Core.Interfaces
 {
 	public interface ISerializableData
 	{
-		void Serialize(BinaryWriter bw);
-		void Deserialize(BinaryReader br);
+		Message Serialize(Message message);
+		void Deserialize(Message message);
 	}
 }

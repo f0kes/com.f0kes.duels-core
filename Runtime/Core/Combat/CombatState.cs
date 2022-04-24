@@ -1,9 +1,11 @@
 ﻿using System;
 using Core.CoreEnums;
+using Core.Interfaces;
+using RiptideNetworking;
 
 namespace Core.Combat
 {
-	public class CombatStateContainer
+	public class CombatStateContainer : ISerializableData
 	{
 		public Action<CombatState, Attack> OnStateChanged;
 		public CombatState CurrentState { get; private set; }
@@ -26,6 +28,19 @@ namespace Core.Combat
 		{
 			CurrentState = state;
 			OnStateChanged?.Invoke(state, CurrentAttack);
+		}
+
+
+		public Message Serialize(Message message)
+		{
+			message.AddUShort((ushort)CurrentState);
+			CurrentAttack.Serialize(message);
+			return message;
+		}
+
+		public void Deserialize(Message message)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

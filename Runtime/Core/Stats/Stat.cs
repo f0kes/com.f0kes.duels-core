@@ -5,6 +5,7 @@ using System.Linq;
 using Core.Interfaces;
 using Core.Stats;
 using Core.Types;
+using RiptideNetworking;
 using UnityEngine;
 
 namespace Core.Stats
@@ -93,6 +94,34 @@ namespace Core.Stats
 				Type modType = ChildrenTypeIDGetter<StatModifier>.GetTypeById(modTypeID);
 				StatModifier modifier = (StatModifier) Activator.CreateInstance(modType);
 				modifier.Deserialize(br);
+			}
+		}
+
+		public Message Serialize(Message message)
+		{
+			message.AddFloat(baseValue);
+			message.AddInt(_modifiers.Count);
+			foreach (var modifier in _modifiers)
+			{
+				message.AddUShort(ChildrenTypeIDGetter<StatModifier>.GetIDByType(modifier.GetType()));
+				modifier.Serialize(message);
+			}
+
+			return message;
+		}
+
+		public void Deserialize(Message message)
+		{
+			float temp = message.GetFloat();
+			baseValue = temp;
+			int modCount = message.GetInt();
+			_modifiers = new List<StatModifier>();
+			for (int i = 0; i < modCount; i++)
+			{
+				ushort modTypeID = message.GetUShort();
+				Type modType = ChildrenTypeIDGetter<StatModifier>.GetTypeById(modTypeID);
+				StatModifier modifier = (StatModifier) Activator.CreateInstance(modType);
+				modifier.Deserialize(message);
 			}
 		}
 	}

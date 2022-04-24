@@ -142,11 +142,6 @@ namespace Core.Character
 				return;
 			_currentWeapon.EnqueueAttack();
 		}
-
-
-		private bool IsCharacterAttackable(Entity entity)
-		{
-			return entity.gameObject != gameObject;
-		}
+		
 	}
 }
