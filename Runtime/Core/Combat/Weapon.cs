@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Character;
 using Core.CoreEnums;
 using Core.Enums;
@@ -19,8 +20,7 @@ namespace Core.Combat
 		public Action<CombatState, Attack> OnWeaponStateChanged;
 
 		private Queue<Attack> _attackQueue = new Queue<Attack>();
-
-
+		
 		public WeaponType WeaponType { get; private set; }
 		public WeaponName WeaponName { get; private set; }
 
@@ -33,11 +33,9 @@ namespace Core.Combat
 		private float _currentAttackTime = 0;
 
 		private List<Entity> _pendingVictims = new List<Entity>();
-
-
+		
 		private bool _isBroken;
-
-
+		
 		private StatDict<BasedStat> _playerStats;
 		private Entity _wielder;
 
@@ -45,8 +43,7 @@ namespace Core.Combat
 		private float _currentStaminaPercent = 0;
 		public float CurrentStamina => _currentStaminaPercent * MaxStamina.GetValue();
 		public bool IsBroken => _isBroken;
-
-
+		
 		public Weapon(WeaponObject weaponObject,
 			StatDict<BasedStat> playerStats)
 		{
@@ -87,12 +84,12 @@ namespace Core.Combat
 
 		public void EnqueueAttack()
 		{
-			if (!CanAttack())
+			if (!CanAttack() || _attackQueue.Contains(Attacks.Last()))
 			{
 				return;
 			}
 
-			Debug.Log("Enqueueing attack" + " " + Ticker.CurrentTick + " " + Random.Range(0f,1f));
+
 			Attack toEnqueue = GetNextAttack();
 			_attackQueue.Enqueue(toEnqueue);
 		}
@@ -126,8 +123,6 @@ namespace Core.Combat
 			var prepareTime = _currentAttack.PreparationTime;
 			if (_currentAttackTime >= prepareTime)
 			{
-				Debug.Log("Attack prepared" + " " + Ticker.CurrentTick);
-
 				_pendingVictims.Clear();
 				_state = CombatState.Attacking;
 				_currentAttackTime = 0;
@@ -142,8 +137,6 @@ namespace Core.Combat
 			var attackTime = _currentAttack.AttackTime;
 			if (_currentAttackTime >= attackTime)
 			{
-				Debug.Log("Attack performed" + " " + Ticker.CurrentTick);
-
 				_state = CombatState.Cooldown;
 				_currentAttackTime = 0;
 				_currentAttack.SpellAction.Perform(_pendingVictims, _wielder, _currentAttack);
@@ -151,8 +144,11 @@ namespace Core.Combat
 			}
 			else
 			{
-				List<Entity> victims = GetVictims(_wielder, _currentAttack, _wielder.transform.position);
-				_pendingVictims.AddRange(victims);
+				var victims = GetVictims(_wielder, _currentAttack, _wielder.transform.position);
+				foreach (var victim in victims.Where(victim => !_pendingVictims.Contains(victim)))
+				{
+					_pendingVictims.Add(victim);
+				}
 			}
 		}
 
@@ -161,7 +157,6 @@ namespace Core.Combat
 			float cooldownTime = _currentAttack.CooldownTime;
 			if (_currentAttackTime >= cooldownTime)
 			{
-				Debug.Log("Cooldown finished" + " " + Ticker.CurrentTick);
 				_state = CombatState.Idle;
 				_currentAttackTime = 0;
 				_attackQueue.Dequeue();
