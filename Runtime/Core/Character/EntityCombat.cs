@@ -147,8 +147,13 @@ namespace Core.Character
 
 		public Message Serialize(Message message)
 		{
-			foreach (var weapon in _weapons.ToList())
+			foreach (var weapon in _weapons)
 			{
+				if (weapon == null)
+				{
+					continue;
+				}
+
 				weapon.Serialize(message);
 			}
 
@@ -157,8 +162,14 @@ namespace Core.Character
 
 		public void Deserialize(Message message)
 		{
-			foreach (var weapon in _weapons.ToList())
+			foreach (var weapon in _weapons)
+
 			{
+				if (weapon == null)
+				{
+					continue;
+				}
+
 				weapon.Deserialize(message);
 			}
 		}
