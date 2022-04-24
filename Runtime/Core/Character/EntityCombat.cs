@@ -13,13 +13,13 @@ namespace Core.Character
 	public class EntityCombat : MonoBehaviour
 	{
 		public ushort WeaponChangeTokens => _weaponChangeTokens;
-		
+
 		//bare hands are always on last index
 		public const byte BareHandsIndex = 6;
 
 		public Action<Damage> OnAttack;
 		public Action<Weapon[]> OnWeaponsChanged;
-		public Action<CombatState, Attack> OnCombatStateChanged;
+
 		public Action<ushort, byte> OnWeaponChange;
 
 		[SerializeField] private WeaponObject[] _weaponObjects = new WeaponObject[6];
@@ -27,7 +27,7 @@ namespace Core.Character
 		private Weapon[] _weapons = new Weapon[BareHandsIndex + 1];
 		private Weapon _currentWeapon;
 
-		private CombatState _combatState = CombatState.Idle;
+		public CombatStateContainer CombatStateContainer { get; private set; }
 
 
 		private StatDict<AttributeStat> _attributes = new StatDict<AttributeStat>();
@@ -38,11 +38,12 @@ namespace Core.Character
 		private ushort _entityId;
 
 		public void Init(Entity entity, StatDict<AttributeStat> characterAttributes,
-			StatDict<BasedStat> characterStats)
+			StatDict<BasedStat> characterStats, CombatStateContainer combatStateContainer)
 		{
 			_entityId = entity.Id;
 			_attributes = characterAttributes;
 			_stats = characterStats;
+			CombatStateContainer = combatStateContainer;
 			int i = 0;
 			foreach (var weaponObject in _weaponObjects)
 			{
@@ -51,12 +52,14 @@ namespace Core.Character
 					continue;
 				}
 
-				Weapon weapon = new Weapon(weaponObject, characterStats);
+				Weapon weapon = new Weapon(weaponObject, new VictimGetter(), entity,
+					entity.Stats.GetStat(BasedStat.Stamina), CombatStateContainer);
 				AddWeapon(weapon, i);
 				i++;
 			}
 
-			Weapon bareHandsWeapon = new Weapon(_bareHands, characterStats);
+			Weapon bareHandsWeapon = new Weapon(_bareHands, new VictimGetter(), entity,
+				entity.Stats.GetStat(BasedStat.Stamina), CombatStateContainer);
 			AddWeapon(bareHandsWeapon, BareHandsIndex);
 
 			if (i > 0)
@@ -83,7 +86,6 @@ namespace Core.Character
 		public void AddWeapon(Weapon weapon, int index)
 		{
 			_weapons[index] = weapon;
-			weapon.Equip(_stats, _entityId);
 			OnWeaponsChanged?.Invoke(GetWeapons());
 		}
 
@@ -117,24 +119,16 @@ namespace Core.Character
 			if (_currentWeapon != null)
 			{
 				_currentWeapon.OnBreak -= OnWeaponBreak;
-				_currentWeapon.OnWeaponStateChanged -= OnWeaponStateChanged;
 			}
 
 			_currentWeapon = _weapons[index];
 			_currentWeapon.OnBreak += OnWeaponBreak;
-			_currentWeapon.OnWeaponStateChanged += OnWeaponStateChanged;
+
 
 			EventTrigger.I[_entityId, ActionType.OnWeaponChanged].Invoke(new WeaponChangeEventArgs(index));
 			OnWeaponChange?.Invoke(_entityId, index);
-			
-			
 		}
 
-		private void OnWeaponStateChanged(CombatState state, Attack attack)
-		{
-			_combatState = state;
-			OnCombatStateChanged?.Invoke(state,attack);
-		}
 
 		private void OnWeaponBreak()
 		{

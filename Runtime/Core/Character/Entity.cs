@@ -93,7 +93,7 @@ namespace Core.Character
 			State |= EntityState.Idle;
 			State |= EntityState.CanBeAttacked;
 			
-			_combat.Init(this, Attributes, Stats);
+			_combat.Init(this, Attributes, Stats, new CombatStateContainer());
 			Initialized?.Invoke();
 		}
 
