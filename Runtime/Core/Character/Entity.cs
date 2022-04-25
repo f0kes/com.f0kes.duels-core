@@ -17,7 +17,7 @@ namespace Core.Character
 		public Action<float> OnHealthChanged;
 		public Action Initialized;
 		public Action OnDeath;
-		
+
 		public static Dictionary<ushort, Entity> EntityDict = new Dictionary<ushort, Entity>();
 
 		public ushort Id { get; protected set; }
@@ -36,7 +36,9 @@ namespace Core.Character
 
 		public StatDict<AttributeStat> Attributes = new StatDict<AttributeStat>();
 		public StatDict<BasedStat> Stats = new StatDict<BasedStat>();
+
 		private ResourceContainer _health;
+		private DamageHandler _damageHandler;
 		public EntityCombat Combat => _combat;
 
 
@@ -96,12 +98,15 @@ namespace Core.Character
 
 			_combat.Init(this, Attributes, Stats, new CombatStateContainer());
 			_health = new ResourceContainer(Stats.GetStat(BasedStat.Health));
+			_damageHandler = new DamageHandler(_health);
 			_health.OnDepleted += Die;
+			_health.OnValueChanged += (percent) => OnHealthChanged?.Invoke(percent);
 			Initialized?.Invoke();
 		}
 
 		public void TakeDamage(Damage damage)
 		{
+			_damageHandler.InitiateDamage(damage);
 			_health.SubtractValue(damage.Amount);
 			OnHealthChanged?.Invoke(_health.RemainingPercent);
 		}

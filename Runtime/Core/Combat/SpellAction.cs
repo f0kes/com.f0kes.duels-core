@@ -44,5 +44,11 @@ namespace Combat
 				action.Perform(victims, caster, attack);
 			}
 		}
+
+		public void Perform(Entity victim, Entity caster, Attack attack)
+		{
+			List<Entity> victims = new List<Entity> {victim};
+			Perform(victims, caster, attack);
+		}
 	}
 }

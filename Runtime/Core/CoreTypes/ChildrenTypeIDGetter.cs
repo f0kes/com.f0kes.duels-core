@@ -12,15 +12,12 @@ namespace Core.Types
 		static ChildrenTypeIDGetter()
 		{
 			_ids = new Dictionary<ushort, Type>();
-			List<Type> objects = new List<Type>();
-			foreach (Type type in
-			         Assembly.GetAssembly(typeof(T)).GetTypes()
-				         .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(T))))
-			{
-				objects.Add(type);
-			}
+			var objects = Assembly.GetAssembly(typeof(T))
+				.GetTypes()
+				.Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(T)))
+				.ToList();
 
-			objects.Sort((type,type1)=> String.CompareOrdinal(type.ToString(),type1.ToString()));
+			objects.Sort((type,type1)=> string.CompareOrdinal(type.ToString(),type1.ToString()));
 			for (ushort i = 0; i < objects.Count; i++)
 			{
 				_ids[i] = objects[i];

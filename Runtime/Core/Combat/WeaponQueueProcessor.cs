@@ -85,7 +85,7 @@ namespace Core.Combat
 			if (_currentAttackTime >= attackTime)
 			{
 				_currentAttackTime = 0;
-				_combatStateContainer.CurrentAttack.SpellAction.Perform(_pendingVictims, _wielder, _combatStateContainer.CurrentAttack);
+				//_combatStateContainer.CurrentAttack.SpellAction.Perform(_pendingVictims, _wielder, _combatStateContainer.CurrentAttack);
 				_combatStateContainer.ChangeState(CombatState.Cooldown);
 			}
 			else
@@ -93,6 +93,7 @@ namespace Core.Combat
 				var victims = _victimGetter.GetVictims(_wielder, _combatStateContainer.CurrentAttack, _wielder.transform.position);
 				foreach (var victim in victims.Where(victim => !_pendingVictims.Contains(victim)))
 				{
+					_combatStateContainer.CurrentAttack.SpellAction.Perform(victim, _wielder, _combatStateContainer.CurrentAttack);
 					_pendingVictims.Add(victim);
 				}
 			}

@@ -36,53 +36,21 @@ namespace Core.Events
 	{
 		public Action<TriggerKey, TriggerEventArgs> AnyActionTriggered;
 
-		public class TriggerAction<TArgs>
-		{
-			public bool Authorized { get; set; }
-			private Action<TArgs> AuthorizedAction { get; set; }
-			private Action<TArgs> UnauthorizedAction { get; set; }
-
-			public void Subscribe(Action<TArgs> action, bool needsToBeAuthorised)
-			{
-				if (needsToBeAuthorised)
-				{
-					AuthorizedAction -= action;
-					AuthorizedAction += action;
-					
-				}
-				else
-				{
-					UnauthorizedAction -= action;
-					UnauthorizedAction += action;
-				}
-			}
-
-			public void Invoke(TArgs action, bool forceAuthorization = false)
-			{
-				if (Authorized || forceAuthorization)
-				{
-					AuthorizedAction?.Invoke(action);
-				}
-
-				UnauthorizedAction?.Invoke(action);
-			}
-		}
-
 		private static EventTrigger _instance;
 		public static EventTrigger I => _instance ??= new EventTrigger();
 
 
-		private Dictionary<TriggerKey, TriggerAction<TriggerEventArgs>> _triggers =
-			new Dictionary<TriggerKey, TriggerAction<TriggerEventArgs>>();
+		private Dictionary<TriggerKey, AuthorizableAction<TriggerEventArgs>> _triggers =
+			new Dictionary<TriggerKey, AuthorizableAction<TriggerEventArgs>>();
 
 
-		public TriggerAction<TriggerEventArgs> this[TriggerKey triggerKey]
+		public AuthorizableAction<TriggerEventArgs> this[TriggerKey triggerKey]
 		{
 			get
 			{
 				if (!_triggers.ContainsKey(triggerKey))
 				{
-					_triggers[triggerKey] = new TriggerAction<TriggerEventArgs>();
+					_triggers[triggerKey] = new AuthorizableAction<TriggerEventArgs>();
 					_triggers[triggerKey].Subscribe((args) => { AnyActionTriggered?.Invoke(triggerKey, args); }, false);
 				}
 
@@ -90,7 +58,7 @@ namespace Core.Events
 			}
 		}
 
-		public TriggerAction<TriggerEventArgs> this[Entity entity, ActionType type]
+		public AuthorizableAction<TriggerEventArgs> this[Entity entity, ActionType type]
 		{
 			get
 			{
@@ -99,7 +67,7 @@ namespace Core.Events
 			}
 		}
 
-		public TriggerAction<TriggerEventArgs> this[ushort entityId, ActionType type]
+		public AuthorizableAction<TriggerEventArgs> this[ushort entityId, ActionType type]
 		{
 			get
 			{
