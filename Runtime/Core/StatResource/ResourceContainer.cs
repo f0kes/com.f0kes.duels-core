@@ -11,12 +11,12 @@ namespace Core.StatResource
 		public Stat Capacity { get; private set; }
 		public Action<float> OnValueChanged;
 		public Action OnDepleted;
-		
+
 		private float _remainingPercent;
 
 		public float CurrentValue => _remainingPercent * Capacity.GetValue();
 		public float RemainingPercent => _remainingPercent;
-		
+
 
 		public ResourceContainer(Stat capacity, float initialValue = 1)
 		{
@@ -49,6 +49,17 @@ namespace Core.StatResource
 			OnValueChanged?.Invoke(_remainingPercent);
 		}
 
+		public void SetValue(float percent)
+		{
+			_remainingPercent = percent;
+			OnValueChanged?.Invoke(_remainingPercent);
+			if (_remainingPercent <= 0)
+			{
+				_remainingPercent = 0;
+				OnDepleted?.Invoke();
+			}
+		}
+
 		public Message Serialize(Message message)
 		{
 			//Capacity.Serialize(message);
@@ -59,8 +70,8 @@ namespace Core.StatResource
 		public void Deserialize(Message message)
 		{
 			//Capacity.Deserialize(message);
-			_remainingPercent = message.GetFloat();
-			OnValueChanged?.Invoke(_remainingPercent);
+			float remainingPercent = message.GetFloat();
+			SetValue(remainingPercent);
 		}
 	}
 }
