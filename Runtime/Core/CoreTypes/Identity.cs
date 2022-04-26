@@ -106,28 +106,44 @@ namespace Core.Types
 
 		public Identity GetIdentityByPath(ushort[] path)
 		{
+			Debug.Log(GetPathString(GetPathFromShorts(path)));
 			Debug.Log(GetPathString(_identityPath));
 			Debug.Log(ID.Type + " " + ID.Index);
-			
+
 			var typeID = path[0];
 			var index = path[1];
 			var type = InterfaceChildIDGetter<IIdentifiable>.GetTypeById(typeID);
 			var point = new IdentityPoint() {Type = type, Index = index};
-			
+
 			Debug.Log(type + " " + index);
-			
+
 			Array.Copy(path, 2, path, 0, path.Length - 2);
 			return path.Length == 0 ? this : _identityChildren[point].GetIdentityByPath(path);
 		}
 
-		
+		private LinkedList<Identity> GetPathFromShorts(ushort[] ushorts)
+		{
+			var path = new LinkedList<Identity>();
+			var i = 0;
+			while (i < ushorts.Length)
+			{
+				var typeID = ushorts[i];
+				var index = ushorts[i + 1];
+				var type = InterfaceChildIDGetter<IIdentifiable>.GetTypeById(typeID);
+				var point = new IdentityPoint() {Type = type, Index = index};
+				path.AddLast(new Identity(path, point));
+				i += 2;
+			}
+
+			return path;
+		}
 
 		private string GetPathString(LinkedList<Identity> path)
 		{
 			string ps = "";
 			foreach (var p in path)
 			{
-				ps += p.ID.Type.Name + "." + p.ID.Index + "." + "\n" ;
+				ps += p.ID.Type.Name + "." + p.ID.Index + "." + "\n";
 			}
 
 			return ps;
