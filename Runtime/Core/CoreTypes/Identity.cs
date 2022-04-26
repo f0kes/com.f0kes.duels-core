@@ -100,12 +100,13 @@ namespace Core.Types
 				path[i++] = identity.ID.Index;
 				i++;
 			}
-
+			Debug.Log(path + " path");
 			return path;
 		}
 
 		public Identity GetIdentityByPath(ushort[] path)
 		{
+			Debug.Log(path + " path");
 			Debug.Log(GetPathString(GetPathFromShorts(path)));
 			Debug.Log(GetPathString(_identityPath));
 			Debug.Log(ID.Type + " " + ID.Index);
