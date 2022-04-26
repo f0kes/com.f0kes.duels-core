@@ -28,8 +28,12 @@ namespace Core.Types
 
 		public static ushort GetIDByType(Type type)
 		{
-			var id = _ids.First((x) => x.Value == type).Key;
-			return id;
+			if (type.GetCustomAttributes(typeof(AttributedTypeIDGetter), true).Length>0)
+			{
+				var id = _ids.First((x) => x.Value == type).Key;
+				return id;
+			}
+			throw new Exception($"Type{type} does not contain {typeof(AttributedTypeIDGetter)}");
 		}
 
 		public static Type GetTypeById(ushort id)

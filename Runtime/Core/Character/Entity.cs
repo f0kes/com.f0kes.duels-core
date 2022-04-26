@@ -5,12 +5,14 @@ using Core.CoreEnums;
 using Core.Stats;
 using Core.Enums;
 using Core.Events;
+using Core.Interfaces;
 using Core.StatResource;
+using Core.Types;
 using UnityEngine;
 
 namespace Core.Character
 {
-	public class Entity : MonoBehaviour
+	public class Entity : MonoBehaviour, IIdentifiable
 	{
 		public EntityState State { get; private set; }
 
@@ -19,6 +21,7 @@ namespace Core.Character
 		public Action OnDeath;
 
 		public static Dictionary<ushort, Entity> EntityDict = new Dictionary<ushort, Entity>();
+		private Identity _identity;
 
 		public ushort Id { get; protected set; }
 
@@ -81,6 +84,7 @@ namespace Core.Character
 		{
 			EntityDict[id] = this;
 			Id = id;
+			_identity = Identity.Root.GenerateChild(this, id);
 			foreach (AttributeKeyValue kv in _inspectorAttributes)
 			{
 				Attributes.SetStat(kv.AttributeStat, new Stat(kv.Value));
@@ -98,7 +102,7 @@ namespace Core.Character
 
 			_combat.Init(this, Attributes, Stats, new CombatStateContainer());
 			_health = new ResourceContainer(Stats.GetStat(BasedStat.Health));
-			_damageHandler = new DamageHandler(_health);
+			_damageHandler = new DamageHandler(_health, _identity);
 			_health.OnDepleted += Die;
 			_health.OnValueChanged += (percent) => OnHealthChanged?.Invoke(percent);
 			Initialized?.Invoke();

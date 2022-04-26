@@ -1,55 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Core.Interfaces;
 
 namespace Core.Types
 {
-	public class Identity
+	[EnumerableType]
+	public class Identity : IIdentifiable
 	{
-		private static Identity _root;
-		public static Identity Root => _root ??= new Identity(new IdentityPoint());
 		public struct IdentityPoint
 		{
 			public Type Type;
 			public ushort Index;
 		}
-		
 
-		private IdentityPoint _id;
-		private LinkedList<Identity> _identityPath;
-		private Dictionary<Type, ushort> _indexes;
-		private Dictionary<IdentityPoint, Identity> _identityChildren;
+		private static Identity _root;
+		public static Identity Root => _root ??= new Identity(new IdentityPoint {Type = typeof(Identity), Index = 0});
+		public IIdentifiable IdentityObject { get; private set; }
+		public IdentityPoint ID { get; private set; }
+
+
+		private readonly LinkedList<Identity> _identityPath;
+		private readonly Dictionary<Type, List<ushort>> _indexes;
+		private readonly Dictionary<IdentityPoint, Identity> _identityChildren;
 
 		public Identity(IdentityPoint point)
 		{
-			_id = point;
+			ID = point;
 			_identityPath = new LinkedList<Identity>();
-			_indexes = new Dictionary<Type, ushort>();
-			_identityChildren = new Dictionary<IdentityPoint, Identity>();
-		}
-		public Identity(LinkedList<Identity> initialPath, IdentityPoint point)
-		{
-			_identityPath = new LinkedList<Identity>(initialPath);
-			_identityPath.AddLast(this);
-			_id = point;
-			_indexes = new Dictionary<Type, ushort>();
+			_indexes = new Dictionary<Type, List<ushort>>();
 			_identityChildren = new Dictionary<IdentityPoint, Identity>();
 		}
 
-		public Identity AddChild(Type type)
+		private Identity(LinkedList<Identity> initialPath, IdentityPoint point)
 		{
-			IdentityPoint point;
-			if (_indexes.ContainsKey(type))
+			_identityPath = new LinkedList<Identity>(initialPath);
+			_identityPath.AddLast(this);
+			ID = point;
+			_indexes = new Dictionary<Type, List<ushort>>();
+			_identityChildren = new Dictionary<IdentityPoint, Identity>();
+		}
+
+		private ushort GetNextIdForType(Type type)
+		{
+			if (!_indexes.ContainsKey(type))
 			{
-				point = new IdentityPoint() {Type = type, Index = _indexes[type]++};
+				_indexes.Add(type, new List<ushort>());
 			}
-			else
+
+			var list = _indexes[type];
+			if (list.Count == 0)
 			{
-				 point = new IdentityPoint() {Type = type, Index = 0};
-				_indexes.Add(type, 0);
+				list.Add(0);
+				return 0;
 			}
-			Identity newIdentity = new Identity(_identityPath, point);
-			_identityChildren.Add(point, newIdentity);
+
+			var max = list.Max();
+			list.Add((ushort) (max + 1));
+			return (ushort) (max + 1);
+		}
+
+		public Identity GenerateChild(IIdentifiable obj)
+		{
+			var type = obj.GetType();
+			return GenerateChild(obj, GetNextIdForType(type));
+		}
+
+		public Identity GenerateChild(IIdentifiable obj, ushort index)
+		{
+			IdentityObject = obj;
+			var type = obj.GetType();
+			var point = new IdentityPoint {Type = type, Index = index};
+			var newIdentity = new Identity(_identityPath, point);
+			_identityChildren[point] = newIdentity;
+			if (!_indexes.ContainsKey(type))
+			{
+				_indexes[type] = new List<ushort>();
+			}
+
+			_indexes[type].Add(index);
 			return newIdentity;
+		}
+
+		public void RemoveChild(Identity child)
+		{
+			_identityChildren.Remove(child.ID);
+			_indexes[child.ID.Type].Remove(child.ID.Index);
+		}
+
+		public ushort[] GetPath()
+		{
+			var path = new ushort[_identityPath.Count * 2];
+			var i = 0;
+			foreach (Identity identity in _identityPath)
+			{
+				path[i] = InterfaceChildIDGetter<IIdentifiable>.GetIDByType(identity.ID.Type);
+				path[i++] = identity.ID.Index;
+				i++;
+			}
+
+			return path;
+		}
+
+		public Identity GetIdentityByPath(ushort[] path)
+		{
+			var typeID = path[0];
+			var index = path[1];
+			var type = InterfaceChildIDGetter<IIdentifiable>.GetTypeById(typeID);
+			var point = new IdentityPoint() {Type = type, Index = index};
+			Array.Copy(path, 2, path, 0, path.Length - 2);
+			return path.Length == 0 ? this : _identityChildren[point].GetIdentityByPath(path);
 		}
 	}
 }

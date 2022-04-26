@@ -8,7 +8,8 @@
         sync,
         eventTriggered,
         weaponChange,
-        combatData
+        combatData,
+        idAction
     }
 
     public enum ClientToServerId : ushort
