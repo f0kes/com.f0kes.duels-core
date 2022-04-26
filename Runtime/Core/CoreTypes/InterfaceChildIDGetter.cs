@@ -22,9 +22,10 @@ namespace Core.Types
 				_ids[i] = objects[i];
 			}
 		}
+
 		public static ushort GetIDByType(Type type)
 		{
-			if (type.IsAssignableFrom(typeof(T)))
+			if (typeof(T).IsAssignableFrom(type))
 			{
 				var id = _ids.First((x) => x.Value == type).Key;
 				return id;
