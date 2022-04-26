@@ -29,7 +29,6 @@ namespace Core.Types
 		{
 			if (typeof(T).IsAssignableFrom(type))
 			{
-				Debug.Log(type);
 				var id = _ids.First((x) => x.Value == type).Key;
 				return id;
 			}
