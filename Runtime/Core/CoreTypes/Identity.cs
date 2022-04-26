@@ -106,8 +106,8 @@ namespace Core.Types
 
 		public Identity GetIdentityByPath(ushort[] path)
 		{
-			LinkedList<Identity> pathList = GetPathFromShorts(path);
-			Debug.Log(GetPathString(pathList));
+			Debug.Log(GetPathString(_identityPath));
+			Debug.Log(ID.Type + " " + ID.Index);
 			
 			var typeID = path[0];
 			var index = path[1];
@@ -117,22 +117,7 @@ namespace Core.Types
 			return path.Length == 0 ? this : _identityChildren[point].GetIdentityByPath(path);
 		}
 
-		private LinkedList<Identity> GetPathFromShorts(ushort[] path)
-		{
-			var list = new LinkedList<Identity>();
-			var i = 0;
-			while (i < path.Length)
-			{
-				var typeID = path[i];
-				var index = path[i + 1];
-				var type = InterfaceChildIDGetter<IIdentifiable>.GetTypeById(typeID);
-				var point = new IdentityPoint() {Type = type, Index = index};
-				list.AddLast(_identityChildren[point]);
-				i += 2;
-			}
-
-			return list;
-		}
+		
 
 		private string GetPathString(LinkedList<Identity> path)
 		{
