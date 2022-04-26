@@ -100,13 +100,13 @@ namespace Core.Types
 				path[i++] = identity.ID.Index;
 				i++;
 			}
-			Debug.Log(path + " path");
+			Debug.Log(GetUshortsString(path));
 			return path;
 		}
 
 		public Identity GetIdentityByPath(ushort[] path)
 		{
-			Debug.Log(path + " path");
+			Debug.Log(GetUshortsString(path));
 			Debug.Log(GetPathString(GetPathFromShorts(path)));
 			Debug.Log(GetPathString(_identityPath));
 			Debug.Log(ID.Type + " " + ID.Index);
@@ -145,6 +145,16 @@ namespace Core.Types
 			foreach (var p in path)
 			{
 				ps += p.ID.Type.Name + "." + p.ID.Index + "." + "\n";
+			}
+
+			return ps;
+		}
+		private static string GetUshortsString(ushort[] ushorts)
+		{
+			string ps = "";
+			foreach (var p in ushorts)
+			{
+				ps += p + " ";
 			}
 
 			return ps;
