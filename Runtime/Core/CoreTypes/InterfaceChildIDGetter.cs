@@ -22,11 +22,6 @@ namespace Core.Types
 			{
 				_ids[i] = objects[i];
 			}
-
-			foreach (var kv in _ids)
-			{
-				Debug.Log(kv.Value + ": " + kv.Key);
-			}
 		}
 
 		public static ushort GetIDByType(Type type)
