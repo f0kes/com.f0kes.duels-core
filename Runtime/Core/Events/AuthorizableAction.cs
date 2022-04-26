@@ -5,13 +5,13 @@ using Core.Types;
 
 namespace Core.Events
 {
-	public class AuthorizableAction<TArgs> where TArgs : TriggerEventArgs
+	public class AuthorizableAction
 	{
 		public bool Authorized { get; set; }
-		private Action<TArgs> AuthorizedAction { get; set; }
-		private Action<TArgs> UnauthorizedAction { get; set; }
+		private Action<TriggerEventArgs> AuthorizedAction { get; set; }
+		private Action<TriggerEventArgs> UnauthorizedAction { get; set; }
 
-		public void Subscribe(Action<TArgs> action, bool needsToBeAuthorised)
+		public void Subscribe(Action<TriggerEventArgs> action, bool needsToBeAuthorised)
 		{
 			if (needsToBeAuthorised)
 			{
@@ -25,7 +25,7 @@ namespace Core.Events
 			}
 		}
 
-		public void Invoke(TArgs args, bool forceAuthorization = false)
+		public void Invoke(TriggerEventArgs args, bool forceAuthorization = false)
 		{
 			if (Authorized || forceAuthorization)
 			{
@@ -36,7 +36,7 @@ namespace Core.Events
 		}
 	}
 
-	public class AuthorizableActionSync<TArgs> : AuthorizableAction<TArgs>, IIdentifiable where TArgs : TriggerEventArgs
+	public class AuthorizableActionSync: AuthorizableAction, IIdentifiable 
 
 	{
 		private Identity _identity;

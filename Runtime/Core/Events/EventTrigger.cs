@@ -40,17 +40,17 @@ namespace Core.Events
 		public static EventTrigger I => _instance ??= new EventTrigger();
 
 
-		private Dictionary<TriggerKey, AuthorizableAction<TriggerEventArgs>> _triggers =
-			new Dictionary<TriggerKey, AuthorizableAction<TriggerEventArgs>>();
+		private Dictionary<TriggerKey, AuthorizableAction> _triggers =
+			new Dictionary<TriggerKey, AuthorizableAction>();
 
 
-		public AuthorizableAction<TriggerEventArgs> this[TriggerKey triggerKey]
+		public AuthorizableAction this[TriggerKey triggerKey]
 		{
 			get
 			{
 				if (!_triggers.ContainsKey(triggerKey))
 				{
-					_triggers[triggerKey] = new AuthorizableAction<TriggerEventArgs>();
+					_triggers[triggerKey] = new AuthorizableAction();
 					_triggers[triggerKey].Subscribe((args) => { AnyActionTriggered?.Invoke(triggerKey, args); }, false);
 				}
 
@@ -58,7 +58,7 @@ namespace Core.Events
 			}
 		}
 
-		public AuthorizableAction<TriggerEventArgs> this[Entity entity, ActionType type]
+		public AuthorizableAction this[Entity entity, ActionType type]
 		{
 			get
 			{
@@ -67,7 +67,7 @@ namespace Core.Events
 			}
 		}
 
-		public AuthorizableAction<TriggerEventArgs> this[ushort entityId, ActionType type]
+		public AuthorizableAction this[ushort entityId, ActionType type]
 		{
 			get
 			{

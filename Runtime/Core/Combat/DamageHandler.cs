@@ -11,9 +11,9 @@ namespace Core.Combat
 	{
 		private Identity _identity;
 
-		public AuthorizableActionSync<DamageEventArgs> OnDamageInitiated;
-		public AuthorizableActionSync<DamageEventArgs> OnDamageDeflected;
-		public AuthorizableActionSync<DamageEventArgs> OnDamageDealt;
+		public AuthorizableActionSync OnDamageInitiated;
+		public AuthorizableActionSync OnDamageDeflected;
+		public AuthorizableActionSync OnDamageDealt;
 
 		private List<Damage> _damages = new List<Damage>();
 
@@ -24,14 +24,18 @@ namespace Core.Combat
 			_damagableResource = damagableResource;
 			_identity = parentIdentity.GenerateChild(this);
 
-			OnDamageInitiated = new AuthorizableActionSync<DamageEventArgs>(_identity);
-			OnDamageDeflected = new AuthorizableActionSync<DamageEventArgs>(_identity);
-			OnDamageDealt = new AuthorizableActionSync<DamageEventArgs>(_identity);
+			OnDamageInitiated = new AuthorizableActionSync(_identity);
+			OnDamageDeflected = new AuthorizableActionSync(_identity);
+			OnDamageDealt = new AuthorizableActionSync(_identity);
 		}
 
 		public void InitiateDamage(Damage damage)
 		{
-			OnDamageDealt.Subscribe((dArgs) => { _damagableResource.SubtractValue(dArgs.Damage.Amount); }, true);
+			OnDamageDealt.Subscribe((dArgs) =>
+			{
+				if (dArgs is DamageEventArgs dArgs1)
+					_damagableResource.SubtractValue(dArgs1.Damage.Amount);
+			}, true);
 			_damages.Add(damage);
 			OnDamageInitiated?.Invoke(new DamageEventArgs(damage));
 			if (!damage.IsDeflected)
