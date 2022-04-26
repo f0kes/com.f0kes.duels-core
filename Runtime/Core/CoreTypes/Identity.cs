@@ -94,7 +94,7 @@ namespace Core.Types
 			Debug.Log(GetPathString(_identityPath));
 			var path = new ushort[_identityPath.Count * 2];
 			var i = 0;
-			foreach (Identity identity in _identityPath)
+			foreach (var identity in _identityPath)
 			{
 				path[i] = InterfaceChildIDGetter<IIdentifiable>.GetIDByType(identity.ID.Type);
 				path[i++] = identity.ID.Index;
@@ -113,6 +113,9 @@ namespace Core.Types
 			var index = path[1];
 			var type = InterfaceChildIDGetter<IIdentifiable>.GetTypeById(typeID);
 			var point = new IdentityPoint() {Type = type, Index = index};
+			
+			Debug.Log(type + " " + index);
+			
 			Array.Copy(path, 2, path, 0, path.Length - 2);
 			return path.Length == 0 ? this : _identityChildren[point].GetIdentityByPath(path);
 		}
