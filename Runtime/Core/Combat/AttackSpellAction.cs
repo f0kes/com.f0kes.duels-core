@@ -4,6 +4,7 @@ using Core.Character;
 using Core.CoreEnums;
 using Core.Enums;
 using Core.Events;
+using Core.Types;
 using UnityEngine;
 
 namespace Core.Combat
@@ -39,6 +40,7 @@ namespace Core.Combat
 
 		protected virtual Damage CalculateDamage(Entity victim, Entity actor, Attack attack)
 		{
+			
 			var damage = new Damage(actor.Stats[BasedStat.Damage] * attack.DamageModifier, attack.DamageType, attack);
 			return damage;;
 		}

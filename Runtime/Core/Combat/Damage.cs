@@ -1,11 +1,13 @@
 ﻿using System;
 using Core.Character;
 using Core.Enums;
+using Core.Interfaces;
+using Core.Types;
 using RiptideNetworking;
 
 namespace Core.Combat
 {
-	public class Damage
+	public class Damage 
 	{
 		public Attack Attack { get; private set; }
 		public float Amount { get; private set; }

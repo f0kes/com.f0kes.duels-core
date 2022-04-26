@@ -31,6 +31,7 @@ namespace Core.Combat
 
 		public void InitiateDamage(Damage damage)
 		{
+			OnDamageDealt.Subscribe((dArgs) => { _damagableResource.SubtractValue(dArgs.Damage.Amount); }, true);
 			_damages.Add(damage);
 			OnDamageInitiated?.Invoke(new DamageEventArgs(damage));
 			if (!damage.IsDeflected)
@@ -48,7 +49,6 @@ namespace Core.Combat
 
 		private void DealDamage(Damage damage)
 		{
-			_damagableResource.SubtractValue(damage.Amount);
 			OnDamageDealt?.Invoke(new DamageEventArgs(damage));
 			_damages.Remove(damage);
 		}
