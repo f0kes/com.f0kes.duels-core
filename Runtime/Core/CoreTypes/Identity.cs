@@ -91,25 +91,22 @@ namespace Core.Types
 
 		public ushort[] GetPath()
 		{
-			Debug.Log(GetPathString(_identityPath));
 			var path = new ushort[_identityPath.Count * 2];
 			var i = 0;
 			foreach (var identity in _identityPath)
 			{
 				path[i] = InterfaceChildIDGetter<IIdentifiable>.GetIDByType(identity.ID.Type);
-				path[i++] = identity.ID.Index;
-				i++;
+				path[i+1] = identity.ID.Index;
+				i+=2;
 			}
-			Debug.Log(GetUshortsString(path));
 			return path;
 		}
 
 		public Identity GetIdentityByPath(ushort[] path)
 		{
 			Debug.Log(GetUshortsString(path));
-			Debug.Log(GetPathString(GetPathFromShorts(path)));
 			Debug.Log(GetPathString(_identityPath));
-			Debug.Log(ID.Type + " " + ID.Index);
+		
 
 			var typeID = path[0];
 			var index = path[1];
@@ -149,7 +146,7 @@ namespace Core.Types
 
 			return ps;
 		}
-		private static string GetUshortsString(ushort[] ushorts)
+		public static string GetUshortsString(ushort[] ushorts)
 		{
 			string ps = "";
 			foreach (var p in ushorts)
