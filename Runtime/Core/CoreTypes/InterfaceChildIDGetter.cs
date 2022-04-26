@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 
 namespace Core.Types
 {
@@ -19,6 +20,7 @@ namespace Core.Types
 			objects.Sort((t, t1) => string.CompareOrdinal(t.ToString(), t1.ToString()));
 			for (ushort i = 0; i < objects.Count; i++)
 			{
+				Debug.Log(objects[i].ToString());
 				_ids[i] = objects[i];
 			}
 		}
@@ -27,6 +29,7 @@ namespace Core.Types
 		{
 			if (typeof(T).IsAssignableFrom(type))
 			{
+				Debug.Log(type);
 				var id = _ids.First((x) => x.Value == type).Key;
 				return id;
 			}
