@@ -20,7 +20,6 @@ namespace Core.Types
 			objects.Sort((t, t1) => string.CompareOrdinal(t.ToString(), t1.ToString()));
 			for (ushort i = 0; i < objects.Count; i++)
 			{
-				Debug.Log(objects[i].ToString());
 				_ids[i] = objects[i];
 			}
 		}
