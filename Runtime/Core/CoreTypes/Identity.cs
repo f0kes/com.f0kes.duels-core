@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Interfaces;
+using UnityEngine;
 
 namespace Core.Types
 {
@@ -90,6 +91,7 @@ namespace Core.Types
 
 		public ushort[] GetPath()
 		{
+			Debug.Log(GetPathString(_identityPath));
 			var path = new ushort[_identityPath.Count * 2];
 			var i = 0;
 			foreach (Identity identity in _identityPath)
@@ -104,12 +106,43 @@ namespace Core.Types
 
 		public Identity GetIdentityByPath(ushort[] path)
 		{
+			LinkedList<Identity> pathList = GetPathFromShorts(path);
+			Debug.Log(GetPathString(pathList));
+			
 			var typeID = path[0];
 			var index = path[1];
 			var type = InterfaceChildIDGetter<IIdentifiable>.GetTypeById(typeID);
 			var point = new IdentityPoint() {Type = type, Index = index};
 			Array.Copy(path, 2, path, 0, path.Length - 2);
 			return path.Length == 0 ? this : _identityChildren[point].GetIdentityByPath(path);
+		}
+
+		private LinkedList<Identity> GetPathFromShorts(ushort[] path)
+		{
+			var list = new LinkedList<Identity>();
+			var i = 0;
+			while (i < path.Length)
+			{
+				var typeID = path[i];
+				var index = path[i + 1];
+				var type = InterfaceChildIDGetter<IIdentifiable>.GetTypeById(typeID);
+				var point = new IdentityPoint() {Type = type, Index = index};
+				list.AddLast(_identityChildren[point]);
+				i += 2;
+			}
+
+			return list;
+		}
+
+		private string GetPathString(LinkedList<Identity> path)
+		{
+			string ps = "";
+			foreach (var p in path)
+			{
+				ps += p.ID.Type.Name + "." + p.ID.Index + "." + "\n" ;
+			}
+
+			return ps;
 		}
 	}
 }
