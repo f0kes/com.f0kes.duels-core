@@ -96,27 +96,28 @@ namespace Core.Types
 			foreach (var identity in _identityPath)
 			{
 				path[i] = InterfaceChildIDGetter<IIdentifiable>.GetIDByType(identity.ID.Type);
-				path[i+1] = identity.ID.Index;
-				i+=2;
+				path[i + 1] = identity.ID.Index;
+				i += 2;
 			}
+
 			return path;
 		}
 
 		public Identity GetIdentityByPath(ushort[] path)
 		{
-			Debug.Log(GetUshortsString(path));
-			Debug.Log(GetPathString(_identityPath));
-		
+			return GetIdentityByPath(GetPathFromShorts(path));
+		}
 
-			var typeID = path[0];
-			var index = path[1];
-			var type = InterfaceChildIDGetter<IIdentifiable>.GetTypeById(typeID);
+		public Identity GetIdentityByPath(LinkedList<Identity> path)
+		{
+			Debug.Log(GetPathString(path));
+			var type = path.First.Value.ID.Type;
+			var index = path.First.Value.ID.Index;
+
 			var point = new IdentityPoint() {Type = type, Index = index};
+			path.RemoveFirst();
 
-			Debug.Log(type + " " + index);
-
-			Array.Copy(path, 2, path, 0, path.Length - 2);
-			return path.Length == 0 ? this : _identityChildren[point].GetIdentityByPath(path);
+			return path.Count == 0 ? this : _identityChildren[point].GetIdentityByPath(path);
 		}
 
 		private LinkedList<Identity> GetPathFromShorts(ushort[] ushorts)
@@ -146,6 +147,7 @@ namespace Core.Types
 
 			return ps;
 		}
+
 		public static string GetUshortsString(ushort[] ushorts)
 		{
 			string ps = "";
