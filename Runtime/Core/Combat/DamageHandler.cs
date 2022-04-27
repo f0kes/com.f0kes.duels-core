@@ -27,15 +27,16 @@ namespace Core.Combat
 			OnDamageInitiated = new AuthorizableActionSync(_identity);
 			OnDamageDeflected = new AuthorizableActionSync(_identity);
 			OnDamageDealt = new AuthorizableActionSync(_identity);
-		}
 
-		public void InitiateDamage(Damage damage)
-		{
 			OnDamageDealt.Subscribe((dArgs) =>
 			{
 				if (dArgs is DamageEventArgs dArgs1)
 					_damagableResource.SubtractValue(dArgs1.Damage.Amount);
 			}, true);
+		}
+
+		public void InitiateDamage(Damage damage)
+		{
 			_damages.Add(damage);
 			OnDamageInitiated?.Invoke(new DamageEventArgs(damage));
 			if (!damage.IsDeflected)
