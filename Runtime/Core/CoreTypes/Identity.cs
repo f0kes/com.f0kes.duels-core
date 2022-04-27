@@ -69,10 +69,13 @@ namespace Core.Types
 
 		public Identity GenerateChild(IIdentifiable obj, ushort index)
 		{
-			IdentityObject = obj;
+			//IdentityObject = obj;
 			var type = obj.GetType();
 			var point = new IdentityPoint {Type = type, Index = index};
-			var newIdentity = new Identity(_identityPath, point);
+			var newIdentity = new Identity(_identityPath, point)
+			{
+				IdentityObject = obj
+			};
 			_identityChildren[point] = newIdentity;
 			if (!_indexes.ContainsKey(type))
 			{
