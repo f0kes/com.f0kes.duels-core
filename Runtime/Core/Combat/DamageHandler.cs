@@ -28,34 +28,42 @@ namespace Core.Combat
 			OnDamageDeflected = new AuthorizableActionSync(_identity);
 			OnDamageDealt = new AuthorizableActionSync(_identity);
 
-			OnDamageDealt.Subscribe((dArgs) =>
-			{
-				if (dArgs is DamageEventArgs dArgs1)
-					_damagableResource.SubtractValue(dArgs1.Damage.Amount);
-			}, true);
+			OnDamageDeflected.Subscribe(DeflectDamage, true);
+			OnDamageInitiated.Subscribe(InitiateDamage, true);
+			OnDamageDealt.Subscribe(DealDamage, true);
 		}
 
-		public void InitiateDamage(Damage damage)
+		private void InitiateDamage(TriggerEventArgs args)
 		{
-			_damages.Add(damage);
-			OnDamageInitiated?.Invoke(new DamageEventArgs(damage));
-			if (!damage.IsDeflected)
+			if (args is DamageEventArgs dArgs)
 			{
-				DealDamage(damage);
+				Damage damage = dArgs.Damage;
+				_damages.Add(damage);
+				if (!damage.IsDeflected)
+				{
+					OnDamageDealt.Invoke(dArgs);
+				}
 			}
 		}
 
-		public void DeflectDamage(Damage damage)
+		private void DeflectDamage(TriggerEventArgs args)
 		{
-			if (!_damages.Contains(damage)) return;
-			damage.Deflect();
-			OnDamageDeflected?.Invoke(new DamageEventArgs(damage));
+			if (args is DamageEventArgs dArgs)
+			{
+				Damage damage = dArgs.Damage;
+				if (!_damages.Contains(damage)) return;
+				damage.Deflect();
+			}
 		}
 
-		private void DealDamage(Damage damage)
+		private void DealDamage(TriggerEventArgs args)
 		{
-			OnDamageDealt?.Invoke(new DamageEventArgs(damage));
-			_damages.Remove(damage);
+			if (args is DamageEventArgs dArgs)
+			{
+				Damage damage = dArgs.Damage;
+				_damagableResource.SubtractValue(dArgs.Damage.Amount);
+				_damages.Remove(damage);
+			}
 		}
 	}
 }

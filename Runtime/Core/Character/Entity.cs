@@ -100,9 +100,11 @@ namespace Core.Character
 			State |= EntityState.Idle;
 			State |= EntityState.CanBeAttacked;
 
-			_combat.Init(this, Attributes, Stats, new CombatStateContainer());
+			
 			_health = new ResourceContainer(Stats.GetStat(BasedStat.Health));
 			_damageHandler = new DamageHandler(_health, _identity);
+			_combat.Init(this, Attributes, Stats, new CombatStateContainer(),_damageHandler);
+			
 			_health.OnDepleted += Die;
 			_health.OnValueChanged += (percent) => OnHealthChanged?.Invoke(percent);
 			Initialized?.Invoke();
@@ -110,7 +112,7 @@ namespace Core.Character
 
 		public void TakeDamage(Damage damage)
 		{
-			_damageHandler.InitiateDamage(damage);
+			_damageHandler.OnDamageInitiated.Invoke(new DamageEventArgs(damage));
 			OnHealthChanged?.Invoke(_health.RemainingPercent);
 		}
 

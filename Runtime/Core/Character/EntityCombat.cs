@@ -30,6 +30,7 @@ namespace Core.Character
 		private Weapon _currentWeapon;
 
 		public CombatStateContainer CombatStateContainer { get; private set; }
+		private DamageHandler _damageHandler;
 
 
 		private StatDict<AttributeStat> _attributes = new StatDict<AttributeStat>();
@@ -40,12 +41,14 @@ namespace Core.Character
 		private ushort _entityId;
 
 		public void Init(Entity entity, StatDict<AttributeStat> characterAttributes,
-			StatDict<BasedStat> characterStats, CombatStateContainer combatStateContainer)
+			StatDict<BasedStat> characterStats, CombatStateContainer combatStateContainer, DamageHandler damageHandler)
 		{
 			_entityId = entity.Id;
 			_attributes = characterAttributes;
 			_stats = characterStats;
 			CombatStateContainer = combatStateContainer;
+			_damageHandler = damageHandler;
+			_damageHandler.OnDamageInitiated.Subscribe(OnDamageInitiated, true);
 			int i = 0;
 			foreach (var weaponObject in _weaponObjects)
 			{
@@ -135,6 +138,18 @@ namespace Core.Character
 		private void OnWeaponBreak()
 		{
 			SetWeapon(BareHandsIndex);
+		}
+
+		private void OnDamageInitiated(TriggerEventArgs args)
+		{
+			if (args is DamageEventArgs dArgs)
+			{
+				if (CombatStateContainer.CurrentState == CombatState.PreparingAttack ||
+				    CombatStateContainer.CurrentState == CombatState.Attacking)
+				{
+					_damageHandler.OnDamageDeflected.Invoke(dArgs);
+				}
+			}
 		}
 
 
