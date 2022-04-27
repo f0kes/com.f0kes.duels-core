@@ -123,7 +123,7 @@ namespace Core.Types
 		{
 			var path = new LinkedList<Identity>();
 			var i = 0;
-			while (i <= ushorts.Length)
+			while (i < ushorts.Length)
 			{
 				var typeID = ushorts[i];
 				var index = ushorts[i + 1];
