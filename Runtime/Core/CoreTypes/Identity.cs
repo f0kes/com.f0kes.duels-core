@@ -109,14 +109,16 @@ namespace Core.Types
 
 		public Identity GetIdentityByPath(LinkedList<Identity> path)
 		{
-
+			path.RemoveFirst();
+			if(path.Count == 0)
+				return this;
 			var type = path.First.Value.ID.Type;
 			var index = path.First.Value.ID.Index;
 
 			var point = new IdentityPoint() {Type = type, Index = index};
-			path.RemoveFirst();
+			
 
-			return path.Count == 0 ? this : _identityChildren[point].GetIdentityByPath(path);
+			return _identityChildren[point].GetIdentityByPath(path);
 		}
 
 		private LinkedList<Identity> GetPathFromShorts(ushort[] ushorts)
