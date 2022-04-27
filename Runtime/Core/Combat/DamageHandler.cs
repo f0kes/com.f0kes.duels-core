@@ -4,6 +4,7 @@ using Core.Events;
 using Core.Interfaces;
 using Core.StatResource;
 using Core.Types;
+using UnityEngine;
 
 namespace Core.Combat
 {
@@ -52,6 +53,7 @@ namespace Core.Combat
 			{
 				Damage damage = dArgs.Damage;
 				if (!_damages.Contains(damage)) return;
+				Debug.Log("Damage Deflected");
 				damage.Deflect();
 			}
 		}
