@@ -45,8 +45,6 @@ namespace Core.Events
 		public AuthorizableActionSync(Identity parentIdentity)
 		{
 			_identity = parentIdentity.GenerateChild(this);
-			Debug.Log("Log");
-			Debug.Log(Identity.GetUshortsString(_identity.GetPath()));
 			Subscribe((args) => ActionSyncCollector.OnAnyAction?.Invoke(_identity, args), false);
 			if (ActionSyncCollector.IsAuthorized)
 			{
