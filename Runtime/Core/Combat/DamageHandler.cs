@@ -49,8 +49,10 @@ namespace Core.Combat
 
 		private void DeflectDamage(TriggerEventArgs args)
 		{
+			Debug.Log("Deflecting damage");
 			if (args is DamageEventArgs dArgs)
 			{
+				Debug.Log("Dargs");
 				Damage damage = dArgs.Damage;
 				if (!_damages.Contains(damage)) return;
 				Debug.Log("Damage Deflected");
