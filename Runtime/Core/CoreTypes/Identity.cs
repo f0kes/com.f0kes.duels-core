@@ -108,6 +108,8 @@ namespace Core.Types
 
 		public Identity GetIdentityByPath(LinkedList<Identity> path)
 		{
+			Debug.Log(GetPathString(path));			
+			
 			var type = path.First.Value.ID.Type;
 			var index = path.First.Value.ID.Index;
 
