@@ -29,6 +29,7 @@ namespace Core.Types
 		{
 			ID = point;
 			_identityPath = new LinkedList<Identity>();
+			_identityPath.AddLast(this);
 			_indexes = new Dictionary<Type, List<ushort>>();
 			_identityChildren = new Dictionary<IdentityPoint, Identity>();
 		}
@@ -108,8 +109,7 @@ namespace Core.Types
 
 		public Identity GetIdentityByPath(LinkedList<Identity> path)
 		{
-			Debug.Log(GetPathString(path));			
-			
+
 			var type = path.First.Value.ID.Type;
 			var index = path.First.Value.ID.Index;
 
