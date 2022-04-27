@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Core.Interfaces;
 using Core.Types;
+using UnityEngine;
 
 namespace Core.Events
 {
@@ -36,7 +37,7 @@ namespace Core.Events
 		}
 	}
 
-	public class AuthorizableActionSync: AuthorizableAction, IIdentifiable 
+	public class AuthorizableActionSync : AuthorizableAction, IIdentifiable
 
 	{
 		private Identity _identity;
@@ -44,12 +45,15 @@ namespace Core.Events
 		public AuthorizableActionSync(Identity parentIdentity)
 		{
 			_identity = parentIdentity.GenerateChild(this);
+			Debug.Log("Log");
+			Debug.Log(Identity.GetUshortsString(_identity.GetPath()));
 			Subscribe((args) => ActionSyncCollector.OnAnyAction?.Invoke(_identity, args), false);
 			if (ActionSyncCollector.IsAuthorized)
 			{
 				Authorized = true;
 			}
-			ActionSyncCollector.OnAuthorizeAll+=Authorize;
+
+			ActionSyncCollector.OnAuthorizeAll += Authorize;
 		}
 
 		private void Authorize()
@@ -60,9 +64,10 @@ namespace Core.Events
 
 	public static class ActionSyncCollector
 	{
-		public static bool IsAuthorized { get;private set; }
+		public static bool IsAuthorized { get; private set; }
 		public static Action<Identity, TriggerEventArgs> OnAnyAction { get; set; }
 		public static Action OnAuthorizeAll { get; set; }
+
 
 		public static void AuthorizeAll()
 		{
