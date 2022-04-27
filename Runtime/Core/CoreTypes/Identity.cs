@@ -85,12 +85,7 @@ namespace Core.Types
 			_indexes[type].Add(index);
 			return newIdentity;
 		}
-
-		public void RemoveChild(Identity child)
-		{
-			_identityChildren.Remove(child.ID);
-			_indexes[child.ID.Type].Remove(child.ID.Index);
-		}
+		
 
 		public ushort[] GetPath()
 		{
@@ -126,7 +121,7 @@ namespace Core.Types
 		{
 			var path = new LinkedList<Identity>();
 			var i = 0;
-			while (i < ushorts.Length)
+			while (i <= ushorts.Length)
 			{
 				var typeID = ushorts[i];
 				var index = ushorts[i + 1];
