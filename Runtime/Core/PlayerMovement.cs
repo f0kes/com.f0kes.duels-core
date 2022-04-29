@@ -107,15 +107,7 @@ public class PlayerMovement : MonoBehaviour
 
 		_rb.velocity = dir;
 		_moveDir = new Vector3(dir.x, 0, dir.z);
-		// if (!attack)
-		// {
-		// 	_attackReleased = true;
-		// }
-		// else if (_attackReleased)
-		// {
-		// 	_attackReleased = false;
-		// 	EventTrigger.I[entity, ActionType.OnAttackStarted].Invoke(new EmptyEventArgs());
-		// }
+		
 		if (attack)
 		{
 			EventTrigger.I[entity, ActionType.OnAttackStarted].Invoke(new EmptyEventArgs());

@@ -112,7 +112,7 @@ namespace Core.Character
 
 		public void TakeDamage(Damage damage)
 		{
-			_damageHandler.OnDamageInitiated.Invoke(new DamageEventArgs(damage));
+			_damageHandler.InitiateDamage(damage);
 			OnHealthChanged?.Invoke(_health.RemainingPercent);
 		}
 

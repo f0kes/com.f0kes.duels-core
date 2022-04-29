@@ -144,10 +144,11 @@ namespace Core.Character
 		{
 			if (args is DamageEventArgs dArgs)
 			{
+				Debug.Log(CombatStateContainer.CurrentState);
 				if (CombatStateContainer.CurrentState == CombatState.PreparingAttack ||
 				    CombatStateContainer.CurrentState == CombatState.Attacking)
 				{
-					_damageHandler.OnDamageDeflected.Invoke(dArgs);
+					_damageHandler.DeflectDamage(dArgs.Damage);
 				}
 			}
 		}
@@ -164,12 +165,7 @@ namespace Core.Character
 		{
 			foreach (var weapon in _weapons)
 			{
-				if (weapon == null)
-				{
-					continue;
-				}
-
-				weapon.Serialize(message);
+				weapon?.Serialize(message);
 			}
 
 			return message;
@@ -178,14 +174,8 @@ namespace Core.Character
 		public void Deserialize(Message message)
 		{
 			foreach (var weapon in _weapons)
-
 			{
-				if (weapon == null)
-				{
-					continue;
-				}
-
-				weapon.Deserialize(message);
+				weapon?.Deserialize(message);
 			}
 		}
 	}
