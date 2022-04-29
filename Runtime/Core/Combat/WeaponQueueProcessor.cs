@@ -14,9 +14,10 @@ namespace Core.Combat
 		private readonly Queue<Attack> _attackQueue = new Queue<Attack>();
 		private readonly List<Entity> _pendingVictims = new List<Entity>();
 		private readonly CombatStateContainer _combatStateContainer;
-		private float _currentAttackTime = 0;
 		private readonly Entity _wielder;
 		private readonly ResourceContainer _stamina;
+
+		private float CurrentAttackTime => _combatStateContainer.CurrentAttackTime;
 
 		public WeaponQueueProcessor(VictimGetter victimGetter, Entity wielder, ResourceContainer stamina,
 			CombatStateContainer container)
@@ -39,7 +40,8 @@ namespace Core.Combat
 
 		public void Tick()
 		{
-			_currentAttackTime += Time.fixedDeltaTime;
+			_combatStateContainer.Tick();
+
 			ProcessAttackQueue();
 		}
 
@@ -70,10 +72,9 @@ namespace Core.Combat
 		private void PrepareAttack()
 		{
 			var prepareTime = _combatStateContainer.CurrentAttack.PreparationTime;
-			if (_currentAttackTime >= prepareTime)
+			if (CurrentAttackTime >= prepareTime)
 			{
 				_pendingVictims.Clear();
-				_currentAttackTime = 0;
 				_stamina.SubtractValue(_combatStateContainer.CurrentAttack.StaminaCost);
 				_combatStateContainer.ChangeState(CombatState.Attacking);
 			}
@@ -82,18 +83,19 @@ namespace Core.Combat
 		private void PerformAttack()
 		{
 			var attackTime = _combatStateContainer.CurrentAttack.AttackTime;
-			if (_currentAttackTime >= attackTime)
+			if (CurrentAttackTime >= attackTime)
 			{
-				_currentAttackTime = 0;
 				//_combatStateContainer.CurrentAttack.SpellAction.Perform(_pendingVictims, _wielder, _combatStateContainer.CurrentAttack);
 				_combatStateContainer.ChangeState(CombatState.Cooldown);
 			}
 			else
 			{
-				var victims = _victimGetter.GetVictims(_wielder, _combatStateContainer.CurrentAttack, _wielder.transform.position);
+				var victims = _victimGetter.GetVictims(_wielder, _combatStateContainer.CurrentAttack,
+					_wielder.transform.position);
 				foreach (var victim in victims.Where(victim => !_pendingVictims.Contains(victim)))
 				{
-					_combatStateContainer.CurrentAttack.SpellAction.Perform(victim, _wielder, _combatStateContainer.CurrentAttack);
+					_combatStateContainer.CurrentAttack.SpellAction.Perform(victim, _wielder,
+						_combatStateContainer.CurrentAttack);
 					_pendingVictims.Add(victim);
 				}
 			}
@@ -102,18 +104,15 @@ namespace Core.Combat
 		private void Cooldown()
 		{
 			float cooldownTime = _combatStateContainer.CurrentAttack.CooldownTime;
-			if (_currentAttackTime >= cooldownTime)
+			if (CurrentAttackTime >= cooldownTime)
 			{
-				_currentAttackTime = 0;
-				_attackQueue.Dequeue();
 				_combatStateContainer.ChangeState(CombatState.Idle);
 			}
 		}
 
 		private void Idle()
 		{
-			_currentAttackTime = 0;
-			_combatStateContainer.ChangeState(CombatState.PreparingAttack,_attackQueue.Peek());
+			_combatStateContainer.ChangeState(CombatState.PreparingAttack, _attackQueue.Dequeue());
 		}
 	}
 }

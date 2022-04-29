@@ -2,6 +2,7 @@
 using Core.CoreEnums;
 using Core.Interfaces;
 using RiptideNetworking;
+using UnityEngine;
 
 namespace Core.Combat
 {
@@ -10,6 +11,7 @@ namespace Core.Combat
 		public Action<CombatState, Attack> OnStateChanged;
 		public CombatState CurrentState { get; private set; }
 		public Attack CurrentAttack { get; private set; }
+		public float CurrentAttackTime { get; private set; }
 
 		public CombatStateContainer()
 		{
@@ -26,6 +28,7 @@ namespace Core.Combat
 
 		public void ChangeState(CombatState state)
 		{
+			CurrentAttackTime = 0;
 			CurrentState = state;
 			OnStateChanged?.Invoke(state, CurrentAttack);
 		}
@@ -35,12 +38,20 @@ namespace Core.Combat
 		{
 			message.AddUShort((ushort)CurrentState);
 			CurrentAttack.Serialize(message);
+			message.AddFloat(CurrentAttackTime);
 			return message;
 		}
 
 		public void Deserialize(Message message)
 		{
-			throw new NotImplementedException();
+			CurrentState = (CombatState)message.GetUShort();
+			CurrentAttack = new Attack(message);
+			CurrentAttackTime = message.GetFloat();
+		}
+
+		public void Tick()
+		{
+			CurrentAttackTime += Time.fixedDeltaTime;
 		}
 	}
 }

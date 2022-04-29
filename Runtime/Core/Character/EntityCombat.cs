@@ -151,7 +151,14 @@ namespace Core.Character
 				}
 			}
 		}
-
+		private void OnDamageDeflected(TriggerEventArgs args)
+		{
+			if (args is DamageEventArgs dArgs)
+			{
+				CombatStateContainer.ChangeState(CombatState.Idle);
+				EventTrigger.I[_entityId, ActionType.HitBlocked].Invoke(dArgs);
+			}
+		}
 
 		public void Attack(TriggerEventArgs args)
 		{
@@ -167,6 +174,8 @@ namespace Core.Character
 				weapon?.Serialize(message);
 			}
 
+			CombatStateContainer.Serialize(message);
+
 			return message;
 		}
 
@@ -176,6 +185,7 @@ namespace Core.Character
 			{
 				weapon?.Deserialize(message);
 			}
+			CombatStateContainer.Deserialize(message);
 		}
 	}
 }
