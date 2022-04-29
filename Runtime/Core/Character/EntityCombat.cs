@@ -144,7 +144,6 @@ namespace Core.Character
 		{
 			if (args is DamageEventArgs dArgs)
 			{
-				Debug.Log(CombatStateContainer.CurrentState);
 				if (CombatStateContainer.CurrentState == CombatState.PreparingAttack ||
 				    CombatStateContainer.CurrentState == CombatState.Attacking)
 				{
