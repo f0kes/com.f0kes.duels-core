@@ -7,7 +7,7 @@ using RiptideNetworking;
 
 namespace Core.Combat
 {
-	public struct Damage
+	public class Damage
 	{
 		public Attack Attack { get; private set; }
 		public float Amount { get; private set; }

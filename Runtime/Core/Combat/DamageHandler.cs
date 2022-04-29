@@ -38,6 +38,10 @@ namespace Core.Combat
 			{
 				DealDamage(damage);
 			}
+			else
+			{
+				Debug.Log("Damage deflected");
+			}
 		}
 
 		public void DeflectDamage(Damage damage)
