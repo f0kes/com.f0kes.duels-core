@@ -8,6 +8,7 @@ using Core.Events;
 using Core.Interfaces;
 using Core.StatResource;
 using Core.Types;
+using RiptideNetworking;
 using UnityEngine;
 
 namespace Core.Character
@@ -120,6 +121,16 @@ namespace Core.Character
 		{
 			OnDeath?.Invoke();
 			EventTrigger.I[this, ActionType.OnDeath].Invoke(new DeathEventArgs(this));
+		}
+
+		public Message Serialize(Message message)
+		{
+			_health.Serialize(message);
+			return message;
+		}
+		public void Deserialize(Message message)
+		{
+			_health.Deserialize(message);
 		}
 	}
 }

@@ -9,7 +9,8 @@
         eventTriggered,
         weaponChange,
         combatData,
-        idAction
+        idAction,
+        healthChange,
     }
 
     public enum ClientToServerId : ushort
