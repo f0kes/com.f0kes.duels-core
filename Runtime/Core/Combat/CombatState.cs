@@ -36,16 +36,26 @@ namespace Core.Combat
 
 		public Message Serialize(Message message)
 		{
-			message.AddUShort((ushort)CurrentState);
-			CurrentAttack.Serialize(message);
+			message.AddUShort((ushort) CurrentState);
+			var serializeAttack = CurrentAttack != null;
+			message.AddBool(serializeAttack);
+			if (serializeAttack)
+			{
+				CurrentAttack.Serialize(message);
+			}
+
 			message.AddFloat(CurrentAttackTime);
 			return message;
 		}
 
 		public void Deserialize(Message message)
 		{
-			CurrentState = (CombatState)message.GetUShort();
-			CurrentAttack = new Attack(message);
+			CurrentState = (CombatState) message.GetUShort();
+			var serializeAttack = message.GetBool();
+			if (serializeAttack)
+			{
+				CurrentAttack = new Attack(message);
+			}
 			CurrentAttackTime = message.GetFloat();
 		}
 
