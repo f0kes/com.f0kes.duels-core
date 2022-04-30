@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.CoreEnums;
+using Core.Events;
 using Core.Interfaces;
 using RiptideNetworking;
 using UnityEngine;
@@ -17,6 +18,7 @@ namespace Core.Combat
 		{
 			CurrentState = CombatState.Idle;
 			CurrentAttack = null;
+			Ticker.OnTick += Tick;
 		}
 
 		public void ChangeState(CombatState state, Attack attack)
@@ -59,7 +61,7 @@ namespace Core.Combat
 			CurrentAttackTime = message.GetFloat();
 		}
 
-		public void Tick()
+		public void Tick(ushort @ushort)
 		{
 			CurrentAttackTime += Time.fixedDeltaTime;
 		}

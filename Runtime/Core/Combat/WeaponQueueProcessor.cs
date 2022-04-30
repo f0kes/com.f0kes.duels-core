@@ -40,7 +40,6 @@ namespace Core.Combat
 
 		public void Tick()
 		{
-			_combatStateContainer.Tick();
 			ProcessAttackQueue();
 		}
 
