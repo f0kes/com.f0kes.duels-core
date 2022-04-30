@@ -41,13 +41,12 @@ namespace Core.Combat
 		public void Tick()
 		{
 			_combatStateContainer.Tick();
-
 			ProcessAttackQueue();
 		}
 
 		private void ProcessAttackQueue()
 		{
-			if (_attackQueue.Count == 0)
+			if (_combatStateContainer.CurrentAttack == null)
 				return;
 
 			switch (_combatStateContainer.CurrentState)
