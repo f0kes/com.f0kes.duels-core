@@ -46,7 +46,7 @@ namespace Core.Combat
 
 		private void ProcessAttackQueue()
 		{
-			if (_combatStateContainer.CurrentAttack == null)
+			if (_combatStateContainer.CurrentAttack == null && _attackQueue.Count <= 0)
 				return;
 
 			switch (_combatStateContainer.CurrentState)
