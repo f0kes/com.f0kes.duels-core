@@ -112,7 +112,7 @@ namespace Core.Combat
 		{
 			if( _attackQueue.Count > 0)
 			{
-				_combatStateContainer.ChangeState(CombatState.PreparingAttack);
+				_combatStateContainer.ChangeState(CombatState.PreparingAttack, _attackQueue.Dequeue());
 			}
 		}
 	}

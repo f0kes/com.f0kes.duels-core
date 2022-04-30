@@ -61,7 +61,7 @@ namespace Core.Combat
 			CurrentAttackTime = message.GetFloat();
 		}
 
-		public void Tick(ushort @ushort)
+		private void Tick(ushort @ushort)
 		{
 			CurrentAttackTime += Time.fixedDeltaTime;
 		}

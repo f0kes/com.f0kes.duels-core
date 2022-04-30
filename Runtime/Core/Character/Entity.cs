@@ -42,7 +42,7 @@ namespace Core.Character
 		public StatDict<BasedStat> Stats = new StatDict<BasedStat>();
 
 		private ResourceContainer _health;
-		private DamageHandler _damageHandler;
+		public DamageHandler DamageHandler { get; private set; }
 		public EntityCombat Combat => _combat;
 
 
@@ -103,8 +103,8 @@ namespace Core.Character
 
 			
 			_health = new ResourceContainer(Stats.GetStat(BasedStat.Health));
-			_damageHandler = new DamageHandler(_health, _identity);
-			_combat.Init(this, Attributes, Stats, new CombatStateContainer(),_damageHandler);
+			DamageHandler = new DamageHandler(_health, _identity);
+			_combat.Init(this, Attributes, Stats, new CombatStateContainer(),DamageHandler);
 			
 			_health.OnDepleted += Die;
 			_health.OnValueChanged += (percent) => OnHealthChanged?.Invoke(percent);
@@ -113,7 +113,7 @@ namespace Core.Character
 
 		public void TakeDamage(Damage damage)
 		{
-			_damageHandler.InitiateDamage(damage);
+			DamageHandler.InitiateDamage(damage);
 			OnHealthChanged?.Invoke(_health.RemainingPercent);
 		}
 

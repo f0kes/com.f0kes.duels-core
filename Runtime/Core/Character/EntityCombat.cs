@@ -134,6 +134,13 @@ namespace Core.Character
 			OnWeaponChange?.Invoke(_entityId, index);
 		}
 
+		private void FixedUpdate()
+		{
+			if (_currentWeapon != null)
+			{
+				_currentWeapon.Tick();
+			}
+		}
 
 		private void OnWeaponBreak()
 		{
@@ -148,6 +155,7 @@ namespace Core.Character
 				    CombatStateContainer.CurrentState == CombatState.Attacking)
 				{
 					_damageHandler.DeflectDamage(dArgs.Damage);
+					_currentWeapon.Stamina.SubtractValue(dArgs.Damage.Amount);
 				}
 			}
 		}

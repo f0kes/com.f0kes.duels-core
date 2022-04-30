@@ -59,16 +59,11 @@ namespace Core.Combat
 
 			CombatStateContainer = combatStateContainer;
 			_weaponQueueProcessor = new WeaponQueueProcessor(victimGetter, wielder, Stamina, combatStateContainer);
-			Init();
+			
 		}
-
-
-		public void Init()
-		{
-			Ticker.OnTick += OnTick;
-		}
-
-		private void OnTick(ushort obj)
+		
+	
+		public void Tick()
 		{
 			_weaponQueueProcessor.Tick();
 		}

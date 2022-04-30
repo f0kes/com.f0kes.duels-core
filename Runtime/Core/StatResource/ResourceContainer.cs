@@ -27,7 +27,6 @@ namespace Core.StatResource
 
 		public void SubtractValue(float value)
 		{
-			Debug.Log("Subtracting " + value + " from " + Capacity);
 			float newValue = CurrentValue - value;
 			if (newValue < 0)
 			{

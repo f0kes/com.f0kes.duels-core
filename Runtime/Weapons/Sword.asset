@@ -22,7 +22,7 @@ MonoBehaviour:
     CooldownTime: 0.3
     AttackTime: 1
     AttackRange: 4.5
-    StaminaCost: 10
+    StaminaCost: 15
   - SpellAction: {fileID: 11400000, guid: 456c088185c585b4092b109ee1ffb0db, type: 2}
     DamageType: 0
     AttackName: 1
@@ -32,7 +32,7 @@ MonoBehaviour:
     CooldownTime: 0.3
     AttackTime: 1
     AttackRange: 4.5
-    StaminaCost: 10
+    StaminaCost: 15
   - SpellAction: {fileID: 11400000, guid: 456c088185c585b4092b109ee1ffb0db, type: 2}
     DamageType: 0
     AttackName: 6
@@ -42,7 +42,7 @@ MonoBehaviour:
     CooldownTime: 0.1
     AttackTime: 1
     AttackRange: 4.5
-    StaminaCost: 10
+    StaminaCost: 15
   WeaponName: 1
   Type: 10
   BaseAttribute: 2
