@@ -111,7 +111,10 @@ namespace Core.Combat
 
 		private void Idle()
 		{
-			_combatStateContainer.ChangeState(CombatState.PreparingAttack, _attackQueue.Dequeue());
+			if( _attackQueue.Count > 0)
+			{
+				_combatStateContainer.ChangeState(CombatState.PreparingAttack);
+			}
 		}
 	}
 }
